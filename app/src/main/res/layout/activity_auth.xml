@@ -14,14 +14,32 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_bg_top" />
 
-    <ImageView
-        android:id="@+id/ivAppTransLogo"
-        android:layout_width="200dp"
-        android:layout_height="80dp"
+    <LinearLayout
+        android:id="@+id/lnAppTransLogoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/ivTopBgImage"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/coppa_brazil" />
+        android:layout_marginBottom="0dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:src="@drawable/coppa_brazil" />
+
+        <TextView
+            android:id="@+id/aaTvAlertDanger"
+            style="@style/Fastdroid.TextView.Alert.Danger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/space_default"
+            android:layout_marginTop="@dimen/space_sm"
+            android:gravity="center"
+            android:text="YourDefaultPasswordWas123456"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/ivBottomImage"
@@ -51,12 +69,12 @@
         layout="@layout/auth_signin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ivAppTransLogo" />
+        android:layout_below="@id/lnAppTransLogoLayout" />
 
     <include
         layout="@layout/auth_signup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ivAppTransLogo"
+        android:layout_below="@id/lnAppTransLogoLayout"
         android:visibility="gone" />
 </RelativeLayout>

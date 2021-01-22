@@ -25,6 +25,12 @@
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
+    <style name="Fastdroid.TextView.Alert.Danger" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/textview_alert_danger</item>
+        <item name="android:textColor">@color/fastDroidDangerColor</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
     <style name="Fastdroid.Edittext.Default" parent="Widget.AppCompat.EditText">
         <item name="android:background">@drawable/edittext_base</item>
         <item name="android:textColor">@color/fastDroidTextColor</item>

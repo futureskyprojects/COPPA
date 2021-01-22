@@ -10,6 +10,7 @@
     <color name="fastDroidSecondaryColor">#e4e6ef</color>
     <color name="fastDroidSuccessColor">#1bc5bd</color>
     <color name="fastDroidDangerColor">#ee2d41</color>
+    <color name="fastDroidDangerLightColor">#ffe2e5</color>
     <color name="fastDroidWarningColor">#ffa800</color>
     <color name="fastDroidInfoColor">#8950fc</color>
     <color name="fastDroidLightColor">#e4e6ef</color>

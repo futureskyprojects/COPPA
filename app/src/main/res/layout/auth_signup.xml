@@ -13,6 +13,7 @@
         android:paddingHorizontal="20dp"
         android:paddingBottom="30dp">
 
+        <include layout="@layout/fastdroid_circle_avatar" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
@@ -30,49 +31,94 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FullName" />
+            android:text="Email" />
 
         <EditText
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="FullName" />
+            android:hint="Email" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="VessalRegistration" />
+            android:text="Phone" />
 
         <EditText
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="VessalRegistration" />
+            android:hint="Phone" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PhoneNumber" />
+            android:text="Shipowner" />
 
         <EditText
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password" />
+            android:hint="Shipowner" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Password" />
+            android:text="Captain" />
 
         <EditText
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password" />
+            android:hint="Captain" />
+
+        <TextView
+            style="@style/Fastdroid.TextView.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FishingLicense" />
+
+        <EditText
+            style="@style/Fastdroid.Edittext.Default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="FishingLicense" />
+
+        <TextView
+            style="@style/Fastdroid.TextView.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VesselRegistration" />
+
+        <EditText
+            style="@style/Fastdroid.Edittext.Default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="VesselRegistration" />
+
+        <TextView
+            style="@style/Fastdroid.TextView.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duration" />
+
+        <EditText
+            style="@style/Fastdroid.Edittext.Default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Duration" />
+
+        <TextView
+            style="@style/Fastdroid.TextView.Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="YourDefaultPasswordWas123456"
+            android:textColor="@color/fastDroidDangerColor"
+            android:textStyle="bold|italic" />
 
         <Button
             android:id="@+id/asuBtnSignUp"

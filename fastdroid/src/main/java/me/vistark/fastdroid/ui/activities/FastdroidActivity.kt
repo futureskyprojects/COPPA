@@ -2,12 +2,18 @@ package me.vistark.fastdroid.ui.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.*
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import me.vistark.fastdroid.language.LanguageConfig
 import me.vistark.fastdroid.utils.FastdroidContextWrapper
@@ -97,4 +103,54 @@ abstract class FastdroidActivity(
             }
         }
     }
+
+    //region PickImage
+    private val REQUEST_CODE_PICK_IMAGE: Int = 324212
+
+    var pickImageBitmapResult: ((Bitmap?) -> Unit)? = null
+    private fun pickImageForBitmap(pickImageResult: ((Bitmap?) -> Unit)) {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+        this.pickImageBitmapResult = pickImageResult
+    }
+
+    var pickImageUriResult: ((Uri?) -> Unit)? = null
+    private fun pickImageForUri(pickImageResult: ((Uri?) -> Unit)) {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+        this.pickImageUriResult = pickImageResult
+    }
+    //endregion
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Pick image for bitmap or uri
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK) {
+            pickImageUriResult?.invoke(data?.data)
+            if (data?.data != null) {
+                pickImageBitmapResult?.invoke(
+                    try {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            ImageDecoder.decodeBitmap(
+                                ImageDecoder.createSource(
+                                    this.contentResolver,
+                                    data.data!!
+                                )
+                            )
+                        } else {
+                            MediaStore.Images.Media.getBitmap(this.contentResolver, data.data)
+                        }
+                    } catch (e: Exception) {
+                        null
+                    }
+                )
+            } else {
+                pickImageBitmapResult?.invoke(null)
+            }
+        }
+    }
+
+
 }
