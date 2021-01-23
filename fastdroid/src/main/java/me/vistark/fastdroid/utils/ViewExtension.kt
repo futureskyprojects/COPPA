@@ -1,6 +1,7 @@
 package me.vistark.fastdroid.utils
 
 import android.animation.ObjectAnimator
+import android.app.DatePickerDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -8,11 +9,57 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ScrollView
+import android.widget.TextView
 import me.vistark.fastdroid.R
+import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
+import me.vistark.fastdroid.utils.DateTimeUtils.Companion.from
+import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import java.util.*
 
 
 object ViewExtension {
+    fun View.hide() {
+        this.visibility = View.GONE
+    }
+
+    fun View.show() {
+        this.visibility = View.VISIBLE
+    }
+
+    fun View.bindDatePicker(date: Date = Calendar.getInstance().time, onResult: ((Date) -> Unit)) {
+        this.onTap {
+            HideKeyboard()
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            val x = DatePickerDialog(
+                this.context,
+                { v, year, month, dayOfMonth ->
+                    val dateRes = Date().from(year, month, dayOfMonth)
+                    if (this is TextView) {
+                        this.text = dateRes.format()
+                    }
+                    onResult.invoke(dateRes)
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            x.datePicker.init(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            ) { v, year, month, dayOfMonth ->
+                val dateRes = Date().from(year, month, dayOfMonth)
+                if (this is TextView) {
+                    this.text = dateRes.format()
+                }
+                onResult.invoke(dateRes)
+                x.cancel()
+            }
+            x.show()
+        }
+    }
+
     fun ScrollView.moveToTop(duration: Long = 100L) {
         val objectAnimator =
             ObjectAnimator.ofInt(this, "scrollY", this.scrollY, 0).setDuration(duration)
@@ -31,6 +78,20 @@ object ViewExtension {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 changed.invoke()
+            }
+        })
+    }
+
+    fun EditText.onTextChanged(changed: (String) -> Unit) {
+        addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                changed.invoke(p0?.toString()?.trim() ?: "")
             }
         })
     }
