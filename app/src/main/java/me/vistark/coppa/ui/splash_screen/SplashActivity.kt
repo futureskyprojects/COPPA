@@ -9,7 +9,11 @@ import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.utils.GlideUtils.loadImage
 import me.vistark.fastdroid.utils.TimerUtils.startAfter
 
-class SplashActivity : FastdroidActivity(R.layout.activity_splash, false) {
+class SplashActivity : FastdroidActivity(
+    R.layout.activity_splash,
+    isLimit = false,
+    windowBackground = R.drawable.bg_window_45
+) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         aloIvLoadingOverlayIcon.loadImage(R.raw.loading_pink)
@@ -21,8 +25,6 @@ class SplashActivity : FastdroidActivity(R.layout.activity_splash, false) {
 
     fun startAuth() {
         val intent = Intent(this, AuthActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
-        finish()
+        startSingleActivity(intent)
     }
 }

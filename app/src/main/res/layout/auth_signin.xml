@@ -12,16 +12,20 @@
         android:paddingHorizontal="20dp">
 
         <TextView
+            android:id="@+id/asiTvUsername"
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Username" />
 
         <EditText
+            android:id="@+id/asiUsername"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username" />
+            android:hint="Username"
+            android:inputType="text"
+            android:lines="1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -43,10 +47,13 @@
         </RelativeLayout>
 
         <EditText
+            android:id="@+id/asiPassword"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password" />
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:lines="1" />
 
         <Button
             android:id="@+id/asiBtnSignIn"

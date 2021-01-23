@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Fastdroid"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ui.home.HomeActivity"></activity>
         <activity android:name=".ui.splash_screen.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

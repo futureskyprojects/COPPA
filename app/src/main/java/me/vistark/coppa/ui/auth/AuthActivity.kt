@@ -1,5 +1,6 @@
 package me.vistark.coppa.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -9,9 +10,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vistark.coppa.R
 import me.vistark.coppa.application.DefaultValue
-import me.vistark.coppa.application.api.request_body.sign_up.RegisterRequestDTO
-import me.vistark.coppa.application.api.response_body.sign_up.ErrorResponse
+import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
+import me.vistark.coppa.application.api.common.ResponseWrapper
+import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
 import me.vistark.coppa.core.api.APIService
+import me.vistark.coppa.ui.home.HomeActivity
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomRight
@@ -21,6 +24,9 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopLeft
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.EdittextUtils.required
 import me.vistark.fastdroid.utils.EdittextUtils.validate
+import me.vistark.fastdroid.utils.MultipleLanguage.L
+import me.vistark.fastdroid.utils.MultipleLanguage.autoTranslate
+import me.vistark.fastdroid.utils.TimerUtils.startAfter
 import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
 import me.vistark.fastdroid.utils.ViewExtension.hide
 import me.vistark.fastdroid.utils.ViewExtension.moveToTop
@@ -32,9 +38,10 @@ import retrofit2.await
 import java.lang.Exception
 
 
-class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
+class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslate = true) {
     // Dto cho phần đăng ký
     val registerRequestDTO = RegisterRequestDTO()
+    val loginRequestDTO = LoginRequestDTO()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +50,11 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
 
         bindDtoForRegister()
 
+        bindDtoForLogin()
+
+        val intent= Intent(this, HomeActivity::class.java)
+        startSingleActivity(intent)
+
     }
 
     //region Quản lý hiệu ứng chuyển đổi
@@ -50,7 +62,7 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
         asuBtnSignIn.onTap {
             aaTvActionLabel.scaleDownTopLeft(150) {
                 aaTvActionLabel.scaleUpTopLeft(150) {
-                    aaTvActionLabel.text = "Login"
+                    aaTvActionLabel.text = L(getString(R.string.Login))
                 }
             }
             asiScrvSignIn.scaleUpBottomLeft {
@@ -62,7 +74,7 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
         asiBtnSignUp.onTap {
             aaTvActionLabel.scaleDownTopLeft(150) {
                 aaTvActionLabel.scaleUpTopLeft(150) {
-                    aaTvActionLabel.text = "Register"
+                    aaTvActionLabel.text = L(getString(R.string.Register))
                 }
             }
             asiScrvSignIn.scaleDownBottomRight()
@@ -72,6 +84,37 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
         }
     }
     //endregion
+
+    //region Bind và xử lý
+    private fun bindDtoForLogin() {
+        asiUsername.onTextChanged {
+            aaTvAlertDanger.hide()
+            loginRequestDTO.username = it
+        }
+
+        asiPassword.onTextChanged {
+            aaTvAlertDanger.hide()
+            loginRequestDTO.password = it
+        }
+
+        asiBtnSignIn.onTap {
+            val errors = arrayListOf(
+                asiUsername.required(L(getString(R.string.YouMustInputYourUserName))),
+                asiPassword.required(L(getString(R.string.YouMustInputYourPassword)))
+            )
+            if (errors.count { it.isNotEmpty() } > 0) {
+                val err = errors.firstOrNull { it.isNotEmpty() }
+                aaTvAlertDanger.text = err
+                aaTvAlertDanger.show()
+            } else {
+                val loading = showLoadingBase()
+                startAfter(3000) {
+                    loading.dismiss()
+                    TODO("Triển khai API Login")
+                }
+            }
+        }
+    }
 
     private fun bindDtoForRegister() {
         asUsername.onTextChanged {
@@ -117,17 +160,23 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
 
         asuBtnSignUp.onTap {
             val errors = arrayListOf(
-                asUsername.required(),
-                asUsername.validate("^(?=.{4,64}\$)(?:[a-zA-Z\\d]+(?:(?:|_)[a-zA-Z\\d])*)+\$"),
-                aaEmail.required(),
-                aaEmail.validate("\\S+@\\S+\\.\\S+"),
-                aaPhone.required(),
-                aaPhone.validate("(\\+\\d{1})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}"),
-                aaShipOwner.required(),
-                aaCaptain.required(),
-                aaFishLicense.required(),
-                aaVesselRegistration.required(),
-                aaDuration.required()
+                asUsername.required(L(getString(R.string.YouMustInputYourUserName))),
+                asUsername.validate(
+                    "^(?=.{4,64}\$)(?:[a-zA-Z\\d]+(?:(?:|_)[a-zA-Z\\d])*)+\$",
+                    L(getString(R.string.UsernameMustBeazAZ09_AndHaveLengthFrom4To64))
+                ),
+                aaEmail.required(L(getString(R.string.YouMustInputYourEmail))),
+                aaEmail.validate("\\S+@\\S+\\.\\S+", L(getString(R.string.EmailIsInvalid))),
+                aaPhone.required(L(getString(R.string.YouMustInputPhone))),
+                aaPhone.validate(
+                    "(\\+\\d{1})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
+                    L(getString(R.string.YourPhoneIsInvalid))
+                ),
+                aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),
+                aaCaptain.required(L(getString(R.string.YoutMustInputCaptain))),
+                aaFishLicense.required(L(getString(R.string.YouMustInputFishLicense))),
+                aaVesselRegistration.required(L(getString(R.string.YouMustInputVesselRegistration))),
+                aaDuration.required(L(getString(R.string.YouMustInputDuration)))
             )
             if (errors.count { it.isNotEmpty() } > 0) {
                 val err = errors.firstOrNull { it.isNotEmpty() }
@@ -146,15 +195,12 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
                         println(Gson().toJson(successBody))
 
                     } catch (he: HttpException) {
-                        println(Gson().toJson(he.response()?.raw()?.body()?.string()))
-                        he.printStackTrace()
-                        aaTvAlertDanger.post {
-                            aaTvAlertDanger.text = ErrorResponse(he).extractMessage()
-                        }
+                        TODO("Cần giải quyết vấn đề parse tại đây")
                     } catch (e: Exception) {
                         e.printStackTrace()
                         aaTvAlertDanger.post {
-                            aaTvAlertDanger.text = "RegisterFaildUnexpectedError"
+                            aaTvAlertDanger.text =
+                                L(getString(R.string.RegisterFaild_UnexpectedError))
                         }
                     }
                     runOnUiThread {
@@ -164,4 +210,6 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth) {
             }
         }
     }
+    //endregion
+
 }

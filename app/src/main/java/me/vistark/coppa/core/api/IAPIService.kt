@@ -1,8 +1,7 @@
 package me.vistark.coppa.core.api
 
-import me.vistark.coppa.application.api.request_body.sign_up.RegisterRequestDTO
-import me.vistark.coppa.application.api.response_body.sign_up.ErrorResponse
-import me.vistark.coppa.application.api.response_body.sign_up.error.SignupSuccessResponse
+import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
+import me.vistark.coppa.application.api.signup.response.success.SignupSuccessResponse
 import me.vistark.fastdroid.core.api.interfaces.IFastdroidAPI
 import retrofit2.Call
 import retrofit2.http.Body

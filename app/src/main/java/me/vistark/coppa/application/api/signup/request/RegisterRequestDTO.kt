@@ -1,4 +1,4 @@
-package me.vistark.coppa.application.api.request_body.sign_up
+package me.vistark.coppa.application.api.signup.request
 
 
 import com.google.gson.annotations.SerializedName

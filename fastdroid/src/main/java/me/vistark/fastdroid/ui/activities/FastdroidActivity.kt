@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -13,11 +12,13 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import me.vistark.fastdroid.R
 import me.vistark.fastdroid.language.LanguageConfig
 import me.vistark.fastdroid.utils.FastdroidContextWrapper
 import me.vistark.fastdroid.utils.FastdroidContextWrapper.Companion.forOnCreate
+import me.vistark.fastdroid.utils.MultipleLanguage.autoTranslate
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 
@@ -25,21 +26,38 @@ import me.vistark.fastdroid.utils.storage.AppStorageManager
 abstract class FastdroidActivity(
     val layoutId: Int,
     val isLimit: Boolean = true,
-    val isHaveActionBar: Boolean = false
+    val isHaveActionBar: Boolean = false,
+    var isCanAutoTranslate: Boolean = false,
+    var actionBarBackground: Int = -1,
+    var windowBackground: Int = -1
 ) : AppCompatActivity() {
-
     var reqOri = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-
+        if (windowBackground > 0)
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
         super.onCreate(savedInstanceState)
         setContentView(layoutId)
+
+        // Thiết lập màu nền cho ứng dụng
+        if (windowBackground > 0) {
+            window.setBackgroundDrawable(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    windowBackground,
+                    theme
+                )
+            )
+        }
+
         // Khởi tạo bộ lưu trữ shared preference mặc định
         AppStorageManager.initialize(this)
         // Cấu hình ngôn ngữ
         forOnCreate()
+        // Cấu hình cho khả năng dịch
+        if (isCanAutoTranslate)
+            window.decorView.autoTranslate()
         // Cấu hình ẩn bàn phím khi nhấn bên ngoài
         checkForSetHide(window.decorView.rootView)
         // Full màn hình hoặc không
@@ -56,8 +74,15 @@ abstract class FastdroidActivity(
         }
 
         // Ẩn actionbar hoặc không
-        if (!isHaveActionBar)
+        if (!isHaveActionBar && actionBarBackground <= 0)
             supportActionBar?.hide()
+
+        // Nếu có cho đổi màu action bar
+        if (actionBarBackground > 0) {
+            supportActionBar?.setBackgroundDrawable(
+                ResourcesCompat.getDrawable(resources, actionBarBackground, theme)
+            )
+        }
 
         // Cấu hình quay
         requestedOrientation = reqOri
@@ -150,6 +175,11 @@ abstract class FastdroidActivity(
                 pickImageBitmapResult?.invoke(null)
             }
         }
+    }
+
+    fun startSingleActivity(intent: Intent) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
     }
 
 

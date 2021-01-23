@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">COPPA</string>
+    <string name="Login">Login</string>
+    <string name="Register">Register</string>
+    <string name="YouMustInputYourUserName">YouMustInputYourUserName</string>
+    <string name="UsernameMustBeazAZ09_AndHaveLengthFrom4To64">UsernameMustBeazAZ09_AndHaveLengthFrom4To64</string>
+    <string name="YouMustInputYourEmail">YouMustInputYourEmail</string>
+    <string name="EmailIsInvalid">EmailIsInvalid</string>
+    <string name="YouMustInputPhone">YouMustInputPhone</string>
+    <string name="YourPhoneIsInvalid">YourPhoneIsInvalid</string>
+    <string name="YouMustInputShipOwner">YouMustInputShipOwner</string>
+    <string name="YoutMustInputCaptain">YoutMustInputCaptain</string>
+    <string name="YouMustInputFishLicense">YouMustInputFishLicense</string>
+    <string name="YouMustInputVesselRegistration">YouMustInputVesselRegistration</string>
+    <string name="YouMustInputDuration">YouMustInputDuration</string>
+    <string name="RegisterFaild_UnexpectedError">RegisterFaild_UnexpectedError</string>
+    <string name="YouMustInputYourPassword">YouMustInputYourPassword</string>
 </resources>
