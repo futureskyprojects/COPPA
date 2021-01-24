@@ -3,6 +3,20 @@ package me.vistark.fastdroid.core.api
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 
 object JwtAuth {
+    fun updateJwtAuth(
+        token: String,
+        tokenType: String = CurrentTokenType,
+        authKey: String = AuthorizationKey
+    ) {
+        CurrentToken = token
+        CurrentTokenType = tokenType
+        AuthorizationKey = authKey
+    }
+
+    fun isAuthenticated(): Boolean {
+        return CurrentToken.isNotEmpty() && CurrentTokenType.isNotEmpty() && AuthorizationKey.isNotEmpty()
+    }
+
     var BaseUrl = "https://vistark.me"
 
     var CurrentToken: String = ""

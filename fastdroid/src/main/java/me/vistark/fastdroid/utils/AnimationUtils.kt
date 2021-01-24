@@ -178,5 +178,44 @@ object AnimationUtils {
         anim.duration = duration
         this.startAnimation(anim)
     }
+
+    fun View.scaleUpCenter(duration: Long = 300L, onFinished: (() -> Unit)? = null) {
+        val anim: Animation = ScaleAnimation(
+            0f, 1f,  // Start and end values for the X axis scaling
+            0f, 1f,  // Start and end values for the Y axis scaling
+            Animation.RELATIVE_TO_SELF, 0.5f,  // Pivot point of X scaling
+            Animation.RELATIVE_TO_SELF, 0.5f
+        ) // Pivot point of Y scaling
+
+        // anim.fillAfter = true // Needed to keep the result of the animation
+
+        anim.doOnEnd {
+            this.visibility = View.VISIBLE
+            onFinished?.invoke()
+        }
+
+        anim.duration = duration
+        this.startAnimation(anim)
+    }
+
+    fun View.scaleDownCenter(duration: Long = 300L, onFinished: (() -> Unit)? = null) {
+        val anim: Animation = ScaleAnimation(
+            1f, 0f,  // Start and end values for the X axis scaling
+            1f, 0f,  // Start and end values for the Y axis scaling
+            Animation.RELATIVE_TO_SELF, 0.5f,  // Pivot point of X scaling
+            Animation.RELATIVE_TO_SELF, 0.5f
+        ) // Pivot point of Y scaling
+
+        // anim.fillAfter = true // Needed to keep the result of the animation
+
+        anim.doOnEnd {
+            this.visibility = View.GONE
+            onFinished?.invoke()
+        }
+
+        anim.duration = duration
+        this.startAnimation(anim)
+    }
+
     //endregion
 }

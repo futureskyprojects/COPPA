@@ -5,25 +5,37 @@ import android.app.DatePickerDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import me.vistark.fastdroid.R
+import me.vistark.fastdroid.utils.AnimationUtils.doOnEnd
+import me.vistark.fastdroid.utils.AnimationUtils.scaleDownCenter
+import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.from
+import me.vistark.fastdroid.utils.VibrateUtils.vibrate
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import java.util.*
 
 
 object ViewExtension {
     fun View.hide() {
-        this.visibility = View.GONE
+        scaleDownCenter(150)
+//        this.visibility = View.GONE
     }
 
     fun View.show() {
-        this.visibility = View.VISIBLE
+        scaleUpCenter(150)
+//        this.visibility = View.VISIBLE
     }
 
     fun View.bindDatePicker(date: Date = Calendar.getInstance().time, onResult: ((Date) -> Unit)) {
@@ -99,8 +111,15 @@ object ViewExtension {
     fun View.onTap(f: () -> Unit) {
         val anim = AnimationUtils.loadAnimation(this.context, R.anim.scale_bounce)
         this.setOnClickListener {
+            vibrate(30)
+            this.isEnabled = false
             this.startAnimation(anim)
             this.postDelayed(f, anim.duration + 10)
+        }
+        anim.doOnEnd {
+            this.postDelayed({
+                this.isEnabled = true
+            }, 100)
         }
     }
 
@@ -178,5 +197,15 @@ object ViewExtension {
             }
         })
         this.startAnimation(anim)
+    }
+
+    fun CardView.setMargin(
+        left: Int = marginLeft,
+        top: Int = marginTop,
+        right: Int = marginRight,
+        bottom: Int = marginBottom
+    ) {
+        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(left, top, right, bottom)
+        requestLayout()
     }
 }

@@ -75,10 +75,22 @@
         <item name="android:background">@drawable/button_danger</item>
     </style>
 
+    <style name="Fastdroid.Button.Danger.Light" parent="Fastdroid.Button.Base">
+        <item name="android:background">@drawable/button_danger_light</item>
+        <item name="android:textColor">@color/fastDroidDangerColor</item>
+    </style>
+
+
     <style name="Fastdroid.Button.Warning" parent="Fastdroid.Button.Base">
         <item name="android:background">@drawable/button_warning</item>
 
     </style>
+
+    <style name="Fastdroid.Button.Warning.Light" parent="Fastdroid.Button.Base">
+        <item name="android:background">@drawable/button_warning_light</item>
+        <item name="android:textColor">@color/fastDroidWarningColor</item>
+    </style>
+
 
     <style name="Fastdroid.Button.Info" parent="Fastdroid.Button.Base">
         <item name="android:background">@drawable/button_info</item>

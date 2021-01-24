@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_marginTop="150dp"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Fastdroid.TextView.Label"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="@dimen/space_default"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/slim_head_round"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Bảng diều khiển"
+        android:textAllCaps="true"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_control_component_in_trip" />
+
+        <include layout="@layout/layout_control_component_out_trip" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:background="@color/white"
+        android:visibility="gone" />
+
+</LinearLayout>

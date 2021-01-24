@@ -15,4 +15,8 @@
     <string name="YouMustInputDuration">YouMustInputDuration</string>
     <string name="RegisterFaild_UnexpectedError">RegisterFaild_UnexpectedError</string>
     <string name="YouMustInputYourPassword">YouMustInputYourPassword</string>
+    <string name="title_activity_home">Map</string>
+    <string name="AppRequiredAcceptAllPermissionsToMakeActive">AppRequiredAcceptAllPermissionsToMakeActive</string>
+    <string name="RequestPermission">RequestPermission</string>
+    <string name="LoginFaild_UnexpectedError">LoginFaild_UnexpectedError</string>
 </resources>

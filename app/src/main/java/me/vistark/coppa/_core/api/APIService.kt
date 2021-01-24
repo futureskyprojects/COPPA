@@ -1,4 +1,4 @@
-package me.vistark.coppa.core.api
+package me.vistark.coppa._core.api
 
 import me.vistark.fastdroid.core.api.FastdroidAPIService
 

@@ -3,6 +3,7 @@ package me.vistark.coppa.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import com.google.gson.Gson
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.auth_signin.*
 import kotlinx.android.synthetic.main.auth_signup.*
@@ -10,11 +11,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vistark.coppa.R
 import me.vistark.coppa.application.DefaultValue
+import me.vistark.coppa.application.RuntimeStorage.CurrentUsername
 import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
-import me.vistark.coppa.application.api.common.ResponseWrapper
 import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
-import me.vistark.coppa.core.api.APIService
+import me.vistark.coppa._core.api.APIService
 import me.vistark.coppa.ui.home.HomeActivity
+import me.vistark.fastdroid.core.api.JwtAuth.updateJwtAuth
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomRight
@@ -25,7 +27,6 @@ import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.EdittextUtils.required
 import me.vistark.fastdroid.utils.EdittextUtils.validate
 import me.vistark.fastdroid.utils.MultipleLanguage.L
-import me.vistark.fastdroid.utils.MultipleLanguage.autoTranslate
 import me.vistark.fastdroid.utils.TimerUtils.startAfter
 import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
 import me.vistark.fastdroid.utils.ViewExtension.hide
@@ -38,7 +39,11 @@ import retrofit2.await
 import java.lang.Exception
 
 
-class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslate = true) {
+class AuthActivity : FastdroidActivity(
+    R.layout.activity_auth,
+    isCanAutoTranslate = true,
+    windowBackground = R.drawable.bg_window_45
+) {
     // Dto cho phần đăng ký
     val registerRequestDTO = RegisterRequestDTO()
     val loginRequestDTO = LoginRequestDTO()
@@ -46,20 +51,27 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        aaTvAlertDanger.hide()
+
+        initDefaultData()
+
         switchManager()
 
         bindDtoForRegister()
 
         bindDtoForLogin()
 
-        val intent= Intent(this, HomeActivity::class.java)
-        startSingleActivity(intent)
+    }
 
+    private fun initDefaultData() {
+        asiUsername.setText(CurrentUsername)
+//        loginRequestDTO.username
     }
 
     //region Quản lý hiệu ứng chuyển đổi
     fun switchManager() {
         asuBtnSignIn.onTap {
+            aaTvAlertDanger.hide()
             aaTvActionLabel.scaleDownTopLeft(150) {
                 aaTvActionLabel.scaleUpTopLeft(150) {
                     aaTvActionLabel.text = L(getString(R.string.Login))
@@ -72,6 +84,7 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
         }
 
         asiBtnSignUp.onTap {
+            aaTvAlertDanger.hide()
             aaTvActionLabel.scaleDownTopLeft(150) {
                 aaTvActionLabel.scaleUpTopLeft(150) {
                     aaTvActionLabel.text = L(getString(R.string.Register))
@@ -110,7 +123,7 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
                 val loading = showLoadingBase()
                 startAfter(3000) {
                     loading.dismiss()
-                    TODO("Triển khai API Login")
+                    loginProcessing()
                 }
             }
         }
@@ -120,6 +133,7 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
         asUsername.onTextChanged {
             aaTvAlertDanger.hide()
             registerRequestDTO.username = it
+            asiUsername.setText(it)
         }
 
         aaEmail.onTextChanged {
@@ -134,14 +148,24 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
             registerRequestDTO.phone = it
         }
 
-        aaShipOwner.onTextChanged {
+        aaShipOwnerFirstname.onTextChanged {
             aaTvAlertDanger.hide()
-            registerRequestDTO.shipowner = it
+            registerRequestDTO.shipownerFirstname = it
         }
 
-        aaCaptain.onTextChanged {
+        aaShipOwnerLastname.onTextChanged {
             aaTvAlertDanger.hide()
-            registerRequestDTO.captain = it
+            registerRequestDTO.shipownerLastname = it
+        }
+
+        aaCaptainFirstname.onTextChanged {
+            aaTvAlertDanger.hide()
+            registerRequestDTO.captainFirstname = it
+        }
+
+        aaCaptainLastname.onTextChanged {
+            aaTvAlertDanger.hide()
+            registerRequestDTO.captainLastname = it
         }
 
         aaFishLicense.onTextChanged {
@@ -172,8 +196,10 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
                     "(\\+\\d{1})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
                     L(getString(R.string.YourPhoneIsInvalid))
                 ),
-                aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),
-                aaCaptain.required(L(getString(R.string.YoutMustInputCaptain))),
+                aaShipOwnerFirstname.required(L(getString(R.string.YouMustInputShipOwner))),
+                aaShipOwnerLastname.required(L(getString(R.string.YouMustInputShipOwner))),
+                aaCaptainFirstname.required(L(getString(R.string.YoutMustInputCaptain))),
+                aaCaptainLastname.required(L(getString(R.string.YoutMustInputCaptain))),
                 aaFishLicense.required(L(getString(R.string.YouMustInputFishLicense))),
                 aaVesselRegistration.required(L(getString(R.string.YouMustInputVesselRegistration))),
                 aaDuration.required(L(getString(R.string.YouMustInputDuration)))
@@ -212,4 +238,48 @@ class AuthActivity : FastdroidActivity(R.layout.activity_auth, isCanAutoTranslat
     }
     //endregion
 
+    private fun loginProcessing() {
+        GlobalScope.launch {
+            try {
+                val res = APIService().APIs.postLogin(loginRequestDTO).await()
+                if (res.status == 200 && res.result != null) {
+                    // Cập nhật thông tin xác thực
+                    updateJwtAuth(
+                        res.result!!.original.accessToken,
+                        res.result!!.original.tokenType
+                    )
+                    // Thông báo thành công
+                    if (res.message.isNotEmpty()) {
+                        runOnUiThread {
+                            Toasty.success(
+                                this@AuthActivity.applicationContext,
+                                res.message.first(),
+                                Toasty.LENGTH_SHORT,
+                                true
+                            ).show()
+                        }
+                    }
+                    startHome()
+                } else {
+                    if (res.message.isNotEmpty()) {
+                        aaTvAlertDanger.post {
+                            aaTvAlertDanger.text = res.message.first()
+                            aaTvAlertDanger.show()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                aaTvAlertDanger.post {
+                    aaTvAlertDanger.text = L(getString(R.string.LoginFaild_UnexpectedError))
+                    aaTvAlertDanger.show()
+                }
+            }
+        }
+    }
+
+    private fun startHome() {
+        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+        startSingleActivity(intent)
+    }
 }

@@ -9,9 +9,9 @@ import java.lang.Exception
 
 data class ResponseWrapper<T>(
     @SerializedName("message")
-    var message: String = "",
+    var message: ArrayList<String> = ArrayList(),
     @SerializedName("status")
     var status: Int = 0,
-    @SerializedName("data")
+    @SerializedName("result")
     var result: T? = null
 )

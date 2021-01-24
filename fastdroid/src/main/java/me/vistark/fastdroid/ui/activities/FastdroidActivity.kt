@@ -3,6 +3,7 @@ package me.vistark.fastdroid.ui.activities
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -14,11 +15,13 @@ import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import me.vistark.fastdroid.R
+import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver
+import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver.Companion.FASTDROID_BROADCAST_ACTION
 import me.vistark.fastdroid.language.LanguageConfig
 import me.vistark.fastdroid.utils.FastdroidContextWrapper
 import me.vistark.fastdroid.utils.FastdroidContextWrapper.Companion.forOnCreate
 import me.vistark.fastdroid.utils.MultipleLanguage.autoTranslate
+import me.vistark.fastdroid.utils.PermissionUtils.onRequestAllPermissionsResult
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 
@@ -31,8 +34,10 @@ abstract class FastdroidActivity(
     var actionBarBackground: Int = -1,
     var windowBackground: Int = -1
 ) : AppCompatActivity() {
-    var reqOri = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    var statusBarHeight: Int = 0
+    private var mFastdroidBroadcastReciver: FastdroidBroadcastReceiver? = null
 
+    var reqOri = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (windowBackground > 0)
@@ -182,5 +187,75 @@ abstract class FastdroidActivity(
         startActivity(intent)
     }
 
+    fun onStatusbarHeight(action: (Int) -> Unit) {
+        if (statusBarHeight > 0) {
+//            println(">>>>>>>>>>>>>>> [EXISTS]: $statusBarHeight")
+            action.invoke(statusBarHeight)
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            window.decorView.setOnApplyWindowInsetsListener { _, insets ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    statusBarHeight = insets.getInsets(WindowInsets.Type.statusBars()).top
+//                    println(">>>>>>>>>>>>>>> [Build.VERSION_CODES.R]: $statusBarHeight")
+                    action.invoke(statusBarHeight)
+                } else {
+                    statusBarHeight = insets.systemWindowInsetTop
+//                    println(">>>>>>>>>>>>>>> [Build.VERSION_CODES.KITKAT_WATCH]: $statusBarHeight")
+                    action.invoke(statusBarHeight)
+                }
+                return@setOnApplyWindowInsetsListener insets
+            }
+        } else {
+            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                statusBarHeight = resources.getDimensionPixelSize(resourceId)
+//                println(">>>>>>>>>>>>>>> [OLD]: $statusBarHeight")
+                action.invoke(statusBarHeight)
+            } else {
+//                println(">>>>>>>>>>>>>>> [NOOO]: $statusBarHeight")
+                action.invoke(0)
+            }
+        }
+    }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        onRequestAllPermissionsResult(requestCode)
+    }
+
+    // Khởi tạo bộ nhận tín hiệu chung
+    open fun onSignal(key: String, value: String) {
+    }
+
+    private fun initFastdroidBroadcastReciver() {
+        mFastdroidBroadcastReciver = FastdroidBroadcastReceiver().apply {
+            onSignalEvent = { k, v ->
+                onSignal(k, v)
+            }
+        }
+        val filter = IntentFilter(FASTDROID_BROADCAST_ACTION)
+        registerReceiver(mFastdroidBroadcastReciver, filter)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initFastdroidBroadcastReciver()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            if (mFastdroidBroadcastReciver != null) {
+                unregisterReceiver(mFastdroidBroadcastReciver)
+            }
+            mFastdroidBroadcastReciver = null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
