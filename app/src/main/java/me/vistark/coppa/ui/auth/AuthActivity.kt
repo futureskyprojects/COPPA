@@ -148,25 +148,17 @@ class AuthActivity : FastdroidActivity(
             registerRequestDTO.phone = it
         }
 
-        aaShipOwnerFirstname.onTextChanged {
+        aaShipOwner.onTextChanged {
             aaTvAlertDanger.hide()
-            registerRequestDTO.shipownerFirstname = it
+            registerRequestDTO.shipowner = it
         }
 
-        aaShipOwnerLastname.onTextChanged {
+
+        aaCaptain.onTextChanged {
             aaTvAlertDanger.hide()
-            registerRequestDTO.shipownerLastname = it
+            registerRequestDTO.captain = it
         }
 
-        aaCaptainFirstname.onTextChanged {
-            aaTvAlertDanger.hide()
-            registerRequestDTO.captainFirstname = it
-        }
-
-        aaCaptainLastname.onTextChanged {
-            aaTvAlertDanger.hide()
-            registerRequestDTO.captainLastname = it
-        }
 
         aaFishLicense.onTextChanged {
             registerRequestDTO.fishingLicense = it
@@ -196,10 +188,8 @@ class AuthActivity : FastdroidActivity(
                     "(\\+\\d{1})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
                     L(getString(R.string.YourPhoneIsInvalid))
                 ),
-                aaShipOwnerFirstname.required(L(getString(R.string.YouMustInputShipOwner))),
-                aaShipOwnerLastname.required(L(getString(R.string.YouMustInputShipOwner))),
-                aaCaptainFirstname.required(L(getString(R.string.YoutMustInputCaptain))),
-                aaCaptainLastname.required(L(getString(R.string.YoutMustInputCaptain))),
+                aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),
+                aaCaptain.required(L(getString(R.string.YoutMustInputCaptain))),
                 aaFishLicense.required(L(getString(R.string.YouMustInputFishLicense))),
                 aaVesselRegistration.required(L(getString(R.string.YouMustInputVesselRegistration))),
                 aaDuration.required(L(getString(R.string.YouMustInputDuration)))

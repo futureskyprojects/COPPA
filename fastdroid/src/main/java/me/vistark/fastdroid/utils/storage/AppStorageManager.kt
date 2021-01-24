@@ -1,5 +1,6 @@
 package me.vistark.fastdroid.utils.storage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
@@ -12,12 +13,29 @@ object AppStorageManager {
             storageSP = context.getSharedPreferences("Storage", Context.MODE_PRIVATE)
     }
 
+    inline fun <reified T> isObject(): Boolean {
+        return T::class != Int::class &&
+                T::class != Long::class &&
+                T::class != Double::class &&
+                T::class != String::class &&
+                T::class != Boolean::class &&
+                T::class != Float::class
+    }
+
+    @SuppressLint("ApplySharedPref")
     inline fun <reified T> update(key: String, data: T) {
-        storageSP?.edit()?.putString(key, data.toString())?.apply()
+        if (isObject<T>()) {
+            updateObject(key, data)
+            return
+        }
+        storageSP!!.edit().putString(key, data.toString()).commit()
     }
 
     inline fun <reified T> get(key: String): T? {
-        val value = storageSP?.getString(key, null)
+        if (isObject<T>()) {
+            return getObject(key)
+        }
+        val value = storageSP!!.getString(key, null)
         return try {
             when (T::class) {
                 Int::class -> value?.toIntOrNull() as T
@@ -35,11 +53,11 @@ object AppStorageManager {
 
     fun <T> updateObject(key: String, data: T): Boolean {
         val sJson = Gson().toJson(data)
-        return storageSP?.edit()?.putString(key, sJson)?.commit() ?: false
+        return storageSP!!.edit().putString(key, sJson).commit()
     }
 
     inline fun <reified T> getObject(key: String): T {
-        val sJson = storageSP?.getString(key, "")
+        val sJson = storageSP!!.getString(key, "")
         return Gson().fromJson(sJson, T::class.java)
     }
 }

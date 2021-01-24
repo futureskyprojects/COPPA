@@ -1,13 +1,11 @@
-package me.vistark.coppa.application.api.captain_profile.response
+package me.vistark.coppa.application.api.captain_profile.request
 
 
 import com.google.gson.annotations.SerializedName
 
-data class CaptainProfile(
+data class UpdateCaptainProfileRequestDTO(
     @SerializedName("captain")
     var captain: String = "",
-    @SerializedName("created_at")
-    var createdAt: String = "",
     @SerializedName("culture_name")
     var cultureName: String = "",
     @SerializedName("duration")
@@ -16,8 +14,6 @@ data class CaptainProfile(
     var email: String = "",
     @SerializedName("fishing_license")
     var fishingLicense: String = "",
-    @SerializedName("id")
-    var id: Int = 0,
     @SerializedName("image")
     var image: String = "",
     @SerializedName("password")
@@ -25,13 +21,5 @@ data class CaptainProfile(
     @SerializedName("phone")
     var phone: String = "",
     @SerializedName("shipowner")
-    var shipowner: String = "",
-    @SerializedName("status")
-    var status: Int = 0,
-    @SerializedName("updated_at")
-    var updatedAt: String = "",
-    @SerializedName("username")
-    var username: String = "",
-    @SerializedName("vessel_registration")
-    var vesselRegistration: String = ""
+    var shipowner: String = ""
 )

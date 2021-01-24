@@ -1,4 +1,4 @@
-package me.vistark.coppa.application.api.common
+package me.vistark.coppa.application.api._common
 
 
 import com.google.gson.annotations.SerializedName

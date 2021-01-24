@@ -1,11 +1,7 @@
-package me.vistark.coppa.application.api.common
+package me.vistark.coppa.application.api._common
 
 
-import com.google.gson.Gson
-import com.google.gson.JsonParser
 import com.google.gson.annotations.SerializedName
-import retrofit2.HttpException
-import java.lang.Exception
 
 data class ResponseWrapper<T>(
     @SerializedName("message")

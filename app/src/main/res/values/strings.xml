@@ -19,4 +19,5 @@
     <string name="AppRequiredAcceptAllPermissionsToMakeActive">AppRequiredAcceptAllPermissionsToMakeActive</string>
     <string name="RequestPermission">RequestPermission</string>
     <string name="LoginFaild_UnexpectedError">LoginFaild_UnexpectedError</string>
+    <string name="UnxptectedError">UnxptectedError</string>
 </resources>

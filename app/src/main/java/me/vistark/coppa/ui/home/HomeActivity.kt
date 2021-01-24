@@ -36,12 +36,15 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleDownCenter
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomLeft
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomRight
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
-import me.vistark.fastdroid.utils.GlideUtils.loadImage
+import me.vistark.fastdroid.utils.GlideUtils.load
+import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.PermissionUtils.isPermissionGranted
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.setMargin
+import me.vistark.fastdroid.utils.locations.LocationUtils.LatLngToDMS
 import retrofit2.await
+import java.util.*
 import kotlin.math.max
 
 class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
@@ -55,16 +58,13 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Load user nếu đã có
-        loadCurrentUserInfo()
-
         // Điều chỉnh vị trí của thanh tiêu đề
         changeHeaderBarPosition()
 
         // Thiết đặt hiệu ứng khi nhấn các nút
         initViewAnimations()
 
-        // Lấy profile của người dùng
+        // Lấy profile của người dùng nếu có mạng
         getUserProfileProcessing()
 
         // Khởi động services
@@ -77,11 +77,33 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
     private fun initLoadingMapDialog() {
         ahLnLoadingSmallDialog.scaleUpCenter(200)
         aloTvLoadingMessage.text = L("SystemIsGettingYourLocation")
-        aloIvLoadingOverlayIcon.loadImage(me.vistark.fastdroid.R.raw.loading_pink)
+        aloIvLoadingOverlayIcon.load(me.vistark.fastdroid.R.raw.loading_pink)
+
+//        Timer().schedule(object : TimerTask() {
+//            override fun run() {
+//                if (isInternetAvailable()) {
+//                    if (ahLnLoadingSmallDialog.visibility != View.GONE)
+//                        runOnUiThread { ahLnLoadingSmallDialog.scaleDownCenter() }
+//                } else {
+//                    if (ahLnLoadingSmallDialog.visibility != View.VISIBLE)
+//                        runOnUiThread {
+//                            aloTvLoadingMessage.text = "Mất mạng"
+//                            ahLnLoadingSmallDialog.scaleUpCenter()
+//                        }
+//                }
+//            }
+//        }, 500, 500)
     }
 
 
     private fun getUserProfileProcessing() {
+        // Load user nếu đã có
+        loadCurrentUserInfo()
+
+        // Nếu không có mạng thì bỏ qua
+        if (!isInternetAvailable())
+            return
+
         val loading = showLoadingBase()
         GlobalScope.launch {
             try {
@@ -89,9 +111,12 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
                 if (res.status == 200 && res.result != null) {
                     // Thông báo thành công
                     runOnUiThread {
+                        println("GET: " + Gson().toJson(res.result))
+                        res.result?.apply {
+                            RuntimeStorage.CurrentCaptainProfile = this
+                        }
                         loadCurrentUserInfo()
                     }
-                    RuntimeStorage.CurrentCaptainProfile = res.result!!
                 } else {
                     if (res.message.isNotEmpty()) {
                         Toasty.error(
@@ -122,22 +147,13 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
 
     // Hiển thị thông tin của thuyền trưởng hiện tại
     private fun loadCurrentUserInfo() {
-        if (RuntimeStorage.CurrentCaptainProfile.captain.isNotEmpty()) {
-            lhhcTvWelcomeText.text =
-                String.format(
-                    L("HiCaptain%s!"),
-                    RuntimeStorage.CurrentCaptainProfile.captain.split(" ").lastOrNull() ?: ""
-                )
-        } else {
-            lhhcTvWelcomeText.text =
-                String.format(
-                    L("HiCaptain!")
-                )
-        }
-
-        if (RuntimeStorage.CurrentCaptainProfile.image.isEmpty()) {
-            lhhcIvUserAvatar.loadImage(RuntimeStorage.CurrentCaptainProfile.image.correctPath())
-        }
+        println("STORAGED: " + Gson().toJson(RuntimeStorage.CurrentCaptainProfile))
+        lhhcTvWelcomeText.text =
+            String.format(
+                L("HiCaptain%s!"),
+                RuntimeStorage.CurrentCaptainProfile.captain.split(" ").lastOrNull() ?: ""
+            )
+        lhhcIvUserAvatar.load(RuntimeStorage.CurrentCaptainProfile.image.correctPath(), true)
     }
 
     private fun initViewAnimations() {
@@ -186,6 +202,9 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.uiSettings.isCompassEnabled = false
+        mMap.uiSettings.isMyLocationButtonEnabled = false
+        mMap.uiSettings.isRotateGesturesEnabled = false
         if (isPermissionGranted(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -210,8 +229,8 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
 
     override fun onSignal(key: String, value: String) {
         if (key == BackgroundService.REALTIME_COORDINATES) {
-            println(">>>>>>>>>>>>>>>>>>>>>>>> $value")
             val data = Gson().fromJson(value, FastdroidCoordinate::class.java)
+            lhhcTvCoordinates.text = LatLngToDMS(data.lat, data.long)
             MoveCamera(data.lat, data.long)
         }
     }

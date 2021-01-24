@@ -98,6 +98,8 @@ abstract class FastdroidActivity(
 
     override fun attachBaseContext(newBase: Context?) {
         if (newBase != null) {
+            // Khởi tạo bộ lưu trữ shared preference mặc định
+            AppStorageManager.initialize(newBase)
             super.attachBaseContext(
                 FastdroidContextWrapper.wrap(
                     newBase,

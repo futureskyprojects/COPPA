@@ -66,36 +66,17 @@
             android:layout_height="wrap_content"
             android:text="ShipOwner" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/aaShipOwner"
+            style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <EditText
-                android:id="@+id/aaShipOwnerFirstname"
-                style="@style/Fastdroid.Edittext.Default"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_sm"
-                android:layout_marginRight="@dimen/space_sm"
-                android:layout_weight="1"
-                android:hint="ShipOwnerFirstname"
-                android:inputType="textPersonName|textAutoComplete|textCapWords"
-                android:lines="1" />
-
-            <EditText
-                android:id="@+id/aaShipOwnerLastname"
-                style="@style/Fastdroid.Edittext.Default"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_sm"
-                android:layout_marginLeft="@dimen/space_sm"
-                android:layout_weight="1"
-                android:hint="ShipOwnerLastname"
-                android:inputType="textPersonName|textAutoComplete|textCapWords"
-                android:lines="1" />
-        </LinearLayout>
+            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_marginRight="@dimen/space_sm"
+            android:layout_weight="1"
+            android:hint="ShipOwner"
+            android:inputType="textPersonName|textAutoComplete|textCapWords"
+            android:lines="1" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
@@ -103,36 +84,17 @@
             android:layout_height="wrap_content"
             android:text="Captain" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/aaCaptain"
+            style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <EditText
-                android:id="@+id/aaCaptainFirstname"
-                style="@style/Fastdroid.Edittext.Default"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_sm"
-                android:layout_marginRight="@dimen/space_sm"
-                android:layout_weight="1"
-                android:hint="ShipOwnerFirstname"
-                android:inputType="textPersonName|textAutoComplete|textCapWords"
-                android:lines="1" />
-
-            <EditText
-                android:id="@+id/aaCaptainLastname"
-                style="@style/Fastdroid.Edittext.Default"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_sm"
-                android:layout_marginLeft="@dimen/space_sm"
-                android:layout_weight="1"
-                android:hint="ShipOwnerLastname"
-                android:inputType="textPersonName|textAutoComplete|textCapWords"
-                android:lines="1" />
-        </LinearLayout>
+            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_marginRight="@dimen/space_sm"
+            android:layout_weight="1"
+            android:hint="Captain"
+            android:inputType="textPersonName|textAutoComplete|textCapWords"
+            android:lines="1" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
