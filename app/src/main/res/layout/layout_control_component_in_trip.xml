@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingBottom="10dp"
-    android:visibility="gone">
+    android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,20 +27,26 @@
                 android:weightSum="2">
 
                 <Button
+                    android:id="@+id/lccitBtnAddSpecies"
                     style="@style/Fastdroid.Button.Primary.Light"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
-                    android:text="Thêm Loài" />
+                    android:lines="1"
+                    android:text="Thêm Loài"
+                    android:textSize="12sp" />
 
                 <Button
+                    android:id="@+id/lccitBtnReview"
                     style="@style/Fastdroid.Button.Secondary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
-                    android:text="Xem lại" />
+                    android:lines="1"
+                    android:text="Xem lại"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
@@ -55,6 +60,7 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/lccitBtnTripHistory"
             style="@style/Fastdroid.Button.Warning.Light"
             android:layout_width="0dp"
             android:layout_height="match_parent"

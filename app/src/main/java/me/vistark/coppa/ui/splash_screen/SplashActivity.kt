@@ -3,6 +3,7 @@ package me.vistark.coppa.ui.splash_screen
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import com.google.gson.Gson
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.GlobalScope
@@ -69,12 +70,25 @@ class SplashActivity : FastdroidActivity(
                 // Lấy danh sách các nhóm loài
                 val speciesCategory = apis.getSpeciesCategories().await()
                 speciesCategory.result?.apply {
-                    RuntimeStorage.SpeciesCategories = this
+                    RuntimeStorage.SpeciesCategories = this.toTypedArray()
                 }
+
                 // Lấy danh sách các loài
                 val specieses = apis.getSpecieses().await()
                 specieses.result?.apply {
-                    RuntimeStorage.Specieses = this
+                    RuntimeStorage.Specieses = this.toTypedArray()
+                }
+
+                // Lấy danh sách các cảng biển
+                val seaPorts = apis.getSeaPorts().await()
+                seaPorts.result?.apply {
+                    RuntimeStorage.SeaPorts = this.toTypedArray()
+                }
+
+                // Lấy danh sách lịch sử chuyến đi biển
+                val tripLogs = apis.getTripHistories().await()
+                tripLogs.result?.apply {
+                    RuntimeStorage.TripLogs = this.toTypedArray()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -87,13 +101,11 @@ class SplashActivity : FastdroidActivity(
 
     private fun startNext() {
         startAfter(max(1500 - (System.currentTimeMillis() - appStartAtMillis), 1500)) {
-            val intent =
-                if (isAuthenticated()) {
-                    Intent(this@SplashActivity, HomeActivity::class.java)
-                } else {
-                    Intent(this@SplashActivity, AuthActivity::class.java)
-                }
-            startSingleActivity(intent)
+            if (isAuthenticated()) {
+                startSingleActivity(HomeActivity::class.java)
+            } else {
+                startSingleActivity(AuthActivity::class.java)
+            }
         }
     }
 

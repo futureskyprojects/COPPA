@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import java.lang.Exception
+import com.google.gson.reflect.TypeToken
+
 
 object AppStorageManager {
     var storageSP: SharedPreferences? = null
@@ -28,6 +29,7 @@ object AppStorageManager {
             updateObject(key, data)
             return
         }
+        println("[APP_STORAGE SAVE]: ${data.toString()}")
         storageSP!!.edit().putString(key, data.toString()).commit()
     }
 
@@ -36,6 +38,7 @@ object AppStorageManager {
             return getObject(key)
         }
         val value = storageSP!!.getString(key, null)
+        println("[APP_STORAGE GET]: $value")
         return try {
             when (T::class) {
                 Int::class -> value?.toIntOrNull() as T
@@ -53,11 +56,19 @@ object AppStorageManager {
 
     fun <T> updateObject(key: String, data: T): Boolean {
         val sJson = Gson().toJson(data)
+        println("[APP_STORAGE SAVE]: $sJson")
         return storageSP!!.edit().putString(key, sJson).commit()
     }
 
     inline fun <reified T> getObject(key: String): T {
         val sJson = storageSP!!.getString(key, "")
-        return Gson().fromJson(sJson, T::class.java)
+        println("[APP_STORAGE GET]: $sJson")
+
+        if (T::class == ArrayList::class) {
+            // Không hỗ trợ ArrayList
+            throw Exception("Please use Array instead")
+        } else {
+            return Gson().fromJson(sJson, T::class.java)
+        }
     }
 }

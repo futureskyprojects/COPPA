@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.vistark.coppa">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -26,6 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/Fastdroid"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ui.species_sync_review.SpeciesSyncReviewActivity"
+            android:theme="@style/Fastdroid.Transparent" />
+        <activity
+            android:name=".ui.specices_info_provider.SpeciesInfoProviderActivity"
+            android:theme="@style/Fastdroid.Transparent" />
 
         <service
             android:name=".services.BackgroundService"
@@ -46,11 +51,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.seaport.SeaPortActivity" />
+        <activity
+            android:name=".ui.seaport.SeaPortActivity"
+            android:theme="@style/Fastdroid.Transparent" />
         <activity android:name=".ui.profile.ProfileActivity" />
-        <activity android:name=".ui.species.SpeciesActivity" />
-        <activity android:name=".ui.trip_hostory.TripHistoryActivity" />
-        <activity android:name=".ui.category.CategoryActivity" />
+        <activity
+            android:name=".ui.species.SpeciesActivity"
+            android:theme="@style/Fastdroid.Transparent" />
+        <activity
+            android:name=".ui.trip_hostory.TripHistoryActivity"
+            android:theme="@style/Fastdroid.Transparent" />
+        <activity
+            android:name=".ui.category.CategoryActivity"
+            android:theme="@style/Fastdroid.Transparent" />
         <activity android:name=".ui.auth.AuthActivity" />
     </application>
 

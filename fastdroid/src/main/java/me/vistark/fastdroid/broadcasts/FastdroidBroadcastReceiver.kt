@@ -19,7 +19,6 @@ class FastdroidBroadcastReceiver() :
             intent.putExtra(FASTDROID_BROADCAST_KEY, key)
             intent.putExtra(FASTDROID_BROADCAST_VALUE, value)
             intent.action = FASTDROID_BROADCAST_ACTION
-            println(">>>>>>>>>>>>> CONTENT <<<<<<<<<<<<<<<<<<")
             sendBroadcast(intent)
         }
     }

@@ -6,6 +6,7 @@ import me.vistark.fastdroid.utils.MultipleLanguage.L
 
 object DefaultValue {
     const val DefaultPassword = "123456"
+    const val MinImageRequest = 2
     val AppPermissions: ArrayList<RequirePermission>
         get() {
             val temp: ArrayList<RequirePermission> = ArrayList()

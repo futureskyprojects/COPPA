@@ -19,6 +19,7 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/lccotBtnTripHistory"
                 style="@style/Fastdroid.Button.Warning.Light"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

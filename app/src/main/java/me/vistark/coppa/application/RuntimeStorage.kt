@@ -1,11 +1,31 @@
 package me.vistark.coppa.application
 
-import me.vistark.coppa.domain.entity.CaptainProfile
-import me.vistark.coppa.domain.entity.Species
-import me.vistark.coppa.domain.entity.SpeciesCategory
+import me.vistark.coppa.domain.entity.*
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 
 object RuntimeStorage {
+    fun clean() {
+
+    }
+
+    var TripSyncs: Array<TripSync>
+        get() = AppStorageManager.get("COPPA_TRIP_SYNCS") ?: emptyArray()
+        set(value) {
+            AppStorageManager.update("COPPA_TRIP_SYNCS", value)
+        }
+
+    var CurrentTripSync: TripSync?
+        get() = AppStorageManager.get("COPPA_CURRENT_TRIP")
+        set(value) {
+            AppStorageManager.update("COPPA_CURRENT_TRIP", value)
+        }
+
+    var TripLogs: Array<TripLog>
+        get() = AppStorageManager.get("COPPA_TRIP_LOGS") ?: emptyArray()
+        set(value) {
+            AppStorageManager.update("COPPA_TRIP_LOGS", value)
+        }
+
     var CurrentUsername: String
         get() = AppStorageManager.get("COPPA_CURRENT_USERNAME") ?: ""
         set(value) {
@@ -18,16 +38,22 @@ object RuntimeStorage {
             AppStorageManager.update("COPPA_SAVED_CAPTAIN_PROFILE", value)
         }
 
-    var SpeciesCategories: ArrayList<SpeciesCategory>
-        get() = AppStorageManager.get("COPPA_SPECIES_CATEGORIES") ?: ArrayList()
+    var SpeciesCategories: Array<SpeciesCategory>
+        get() = AppStorageManager.get("COPPA_SPECIES_CATEGORIES") ?: emptyArray()
         set(value) {
             AppStorageManager.update("COPPA_SPECIES_CATEGORIES", value)
         }
 
-    var Specieses: ArrayList<Species>
-        get() = AppStorageManager.get("COPPA_SPECIESES") ?: ArrayList()
+    var Specieses: Array<Species>
+        get() = AppStorageManager.get("COPPA_SPECIESES") ?: emptyArray()
         set(value) {
             AppStorageManager.update("COPPA_SPECIESES", value)
+        }
+
+    var SeaPorts: Array<SeaPort>
+        get() = AppStorageManager.get("COPPA_SEA_PORTS") ?: emptyArray()
+        set(value) {
+            AppStorageManager.update("COPPA_SEA_PORTS", value)
         }
 
 }

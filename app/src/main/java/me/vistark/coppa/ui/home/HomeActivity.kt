@@ -25,7 +25,15 @@ import me.vistark.coppa.R
 import me.vistark.coppa._core.api.APIService
 import me.vistark.coppa._core.utils.CorrectURL.correctPath
 import me.vistark.coppa.application.RuntimeStorage
+import me.vistark.coppa.domain.entity.SeaPort
+import me.vistark.coppa.domain.entity.TripSync.Companion.createTripSync
+import me.vistark.coppa.domain.entity.TripSync.Companion.endTripSync
 import me.vistark.coppa.services.BackgroundService
+import me.vistark.coppa.ui.category.CategoryActivity
+import me.vistark.coppa.ui.seaport.SeaPortActivity.Companion.StartPickSeaPort
+import me.vistark.coppa.ui.seaport.SeaPortActivity.Companion.onPickSeaPortResultProcessing
+import me.vistark.coppa.ui.species_sync_review.SpeciesSyncReviewActivity
+import me.vistark.coppa.ui.trip_hostory.TripHistoryActivity
 import me.vistark.fastdroid.core.models.FastdroidCoordinate
 import me.vistark.fastdroid.services.FastdroidService.Companion.isServiceRunning
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
@@ -47,13 +55,22 @@ import retrofit2.await
 import java.util.*
 import kotlin.math.max
 
-class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
+class HomeActivity : FastdroidActivity(
+    R.layout.activity_home,
+    isLimit = false,
+    isCanAutoTranslate = true
+),
     OnMapReadyCallback {
+
+    companion object {
+        var PUBLIC_CURRENT_COORDINATES: LatLng? = null
+    }
 
     private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -62,10 +79,16 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
         changeHeaderBarPosition()
 
         // Thiết đặt hiệu ứng khi nhấn các nút
-        initViewAnimations()
+        initViewEventsAndAnimations()
+
+        // Hiển thị control panel cho đúng trạng thái
+        initControlPanelViews()
 
         // Lấy profile của người dùng nếu có mạng
         getUserProfileProcessing()
+
+        // Lấy các thông tin bị thiếu nếu chưa có
+        startMissedDataAfterLoggedIn()
 
         // Khởi động services
         runServices()
@@ -74,10 +97,21 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
         initLoadingMapDialog()
     }
 
+    private fun initControlPanelViews() {
+        if (RuntimeStorage.CurrentTripSync != null) {
+            showInTrip()
+        } else {
+            showOutTrip()
+        }
+    }
+
     private fun initLoadingMapDialog() {
         ahLnLoadingSmallDialog.scaleUpCenter(200)
         aloTvLoadingMessage.text = L("SystemIsGettingYourLocation")
         aloIvLoadingOverlayIcon.load(me.vistark.fastdroid.R.raw.loading_pink)
+
+        // Tạm khóa nút thêm loài do vị trí không khả dụng
+        lccitBtnAddSpecies.isEnabled = false
 
 //        Timer().schedule(object : TimerTask() {
 //            override fun run() {
@@ -111,7 +145,6 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
                 if (res.status == 200 && res.result != null) {
                     // Thông báo thành công
                     runOnUiThread {
-                        println("GET: " + Gson().toJson(res.result))
                         res.result?.apply {
                             RuntimeStorage.CurrentCaptainProfile = this
                         }
@@ -147,7 +180,6 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
 
     // Hiển thị thông tin của thuyền trưởng hiện tại
     private fun loadCurrentUserInfo() {
-        println("STORAGED: " + Gson().toJson(RuntimeStorage.CurrentCaptainProfile))
         lhhcTvWelcomeText.text =
             String.format(
                 L("HiCaptain%s!"),
@@ -156,33 +188,63 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
         lhhcIvUserAvatar.load(RuntimeStorage.CurrentCaptainProfile.image.correctPath(), true)
     }
 
-    private fun initViewAnimations() {
+    private fun initViewEventsAndAnimations() {
+        // Ban đầu sẽ ẩn view khi đang trong chuyến đi
+        lccotLnInTripLayout.visibility = View.GONE
         // Khi nhấn nút tạo chuyến đi biển mới
         lccotBtnCreateNewTrip.onTap {
-            onCreateTrip()
-            lccotLnOutTripLayout.scaleDownBottomRight()
-            lccotLnInTripLayout.scaleUpBottomLeft()
+            // Chọn cảng xuất phát
+            StartPickSeaPort(true)
         }
 
         // Khi nhấn nút kết thúc chuyến đi biển
         lccitBtnEndTrip.onTap {
-            onEnTrip()
-            lccotLnOutTripLayout.scaleUpBottomRight()
-            lccotLnInTripLayout.scaleDownBottomLeft()
+            if (!isInternetAvailable()) {
+                Toasty.warning(
+                    this,
+                    L(getString(R.string.YouMustConnectToInternetToHveFinishAndSyncCurrentTrip)),
+                    Toasty.LENGTH_SHORT,
+                    true
+                ).show()
+            } else {
+                // Chọn cảng xuất phát
+                StartPickSeaPort(false)
+            }
         }
 
         // Khi nhấn vào ảnh đại diện của người dùng
         lhhcIvUserAvatar.onTap {
 
         }
+
+        // Khi nhán vào nút thêm loài bắt được vào chuyến
+        lccitBtnAddSpecies.onTap {
+            // Khoải động màn hình danh sách các nhóm loài
+            startActivity(CategoryActivity::class.java)
+            overridePendingTransition(-1, -1)
+        }
+
+        // Khi nhấn vào nút xem lại
+        lccitBtnReview.onTap {
+            // Khoải động màn hình danh sách các loài đã bắt
+            startActivity(SpeciesSyncReviewActivity::class.java)
+            overridePendingTransition(-1, -1)
+        }
+
+        //region Khi nhấn chọn lịch sử chuyến đi
+        lccitBtnTripHistory.onTap {
+            tripHistoryProcessing()
+        }
+
+        lccotBtnTripHistory.onTap {
+            tripHistoryProcessing()
+        }
+        //endregion
     }
 
-    private fun onEnTrip() {
-
-    }
-
-    private fun onCreateTrip() {
-
+    fun tripHistoryProcessing() {
+        // Khởi động màn hình danh sách lịch sử chuyến đi
+        startActivity(TripHistoryActivity::class.java)
     }
 
     private fun changeHeaderBarPosition() {
@@ -215,8 +277,10 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
     }
 
     private fun MoveCamera(lat: Double, lng: Double) {
-        if (ahLnLoadingSmallDialog.visibility != View.GONE)
+        if (ahLnLoadingSmallDialog.visibility != View.GONE) {
             ahLnLoadingSmallDialog.scaleDownCenter(200)
+            lccitBtnAddSpecies.isEnabled = true
+        }
         mMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 LatLng(
@@ -231,6 +295,7 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
         if (key == BackgroundService.REALTIME_COORDINATES) {
             val data = Gson().fromJson(value, FastdroidCoordinate::class.java)
             lhhcTvCoordinates.text = LatLngToDMS(data.lat, data.long)
+            PUBLIC_CURRENT_COORDINATES = LatLng(data.lat, data.long)
             MoveCamera(data.lat, data.long)
         }
     }
@@ -242,6 +307,71 @@ class HomeActivity : FastdroidActivity(R.layout.activity_home, isLimit = false),
                 startForegroundService(intent)
             } else {
                 startService(intent)
+            }
+        }
+    }
+
+    private fun showInTrip() {
+        lccotLnOutTripLayout.scaleDownBottomRight()
+        lccotLnInTripLayout.scaleUpBottomLeft()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        onPickSeaPortResultProcessing(
+            requestCode,
+            resultCode,
+            data
+        ) { seaPort, isSlectForStartSeaPort ->
+            // Khi chọn cảng thành công
+            if (isSlectForStartSeaPort) {
+                // Khởi động chuyến đi
+                createTripSync(seaPort.id)
+                showInTrip()
+            } else {
+                // Khởi động chuyến về
+                endTripSync(seaPort.id)
+                showOutTrip()
+            }
+        }
+    }
+
+    private fun showOutTrip() {
+        lccotLnOutTripLayout.scaleUpBottomRight()
+        lccotLnInTripLayout.scaleDownBottomLeft()
+    }
+
+    private fun startMissedDataAfterLoggedIn() {
+        // Nếu không có mạng thì tiến hành chuyển màn hình luôn
+        if (!isInternetAvailable()) {
+            return
+        }
+
+        val loading = showLoadingBase()
+        // Nếu không tiến hành cập nhật các dữ liệu từ server
+        GlobalScope.launch {
+            try {
+                val apis = APIService().APIs
+
+                // Lấy danh sách các cảng biển nếu chưa có
+                if (RuntimeStorage.SeaPorts.isEmpty()) {
+                    val seaPorts = apis.getSeaPorts().await()
+                    seaPorts.result?.apply {
+                        RuntimeStorage.SeaPorts = this.toTypedArray()
+                    }
+                }
+
+                // Lấy danh sách lịch sử chuyến đi biển
+                val tripLogs = apis.getTripHistories().await()
+                tripLogs.result?.apply {
+                    RuntimeStorage.TripLogs = this.toTypedArray()
+                }
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            } finally {
+                runOnUiThread {
+                    loading.dismiss()
+                }
             }
         }
     }

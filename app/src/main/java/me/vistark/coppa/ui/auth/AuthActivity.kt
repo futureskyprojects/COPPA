@@ -269,7 +269,6 @@ class AuthActivity : FastdroidActivity(
     }
 
     private fun startHome() {
-        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
-        startSingleActivity(intent)
+        startSingleActivity(HomeActivity::class.java)
     }
 }

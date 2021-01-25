@@ -31,7 +31,7 @@ object GlideUtils {
     fun ImageView.path(filePath: String, holderResId: Int = R.drawable.fastdroid_holder) {
         val f = File(filePath)
         if (f.exists()) {
-            val myBitmap = BitmapFactory.decodeFile(f.getAbsolutePath())
+            val myBitmap = BitmapFactory.decodeFile(f.absolutePath)
             setImageBitmap(myBitmap)
         } else {
             setImageResource(holderResId)
@@ -44,30 +44,34 @@ object GlideUtils {
         else {
             val genKey = url.md5() + "." + url.length
             val snapshotPath: String = AppStorageManager.get(genKey) ?: ""
-            if (!isInternetAvailable()) {
-                path(snapshotPath)
-            } else {
-                try {
-                    val path = context.saveImage(url)
-                    if (path.isNotEmpty()) {
-                        try {
-                            File(snapshotPath).delete()
-                        } catch (z: Exception) {
+            path(snapshotPath)
+            if (isInternetAvailable()) {
+                Thread {
+                    try {
+                        val path = context.saveImage(url)
+                        if (path.isNotEmpty()) {
+                            try {
+                                File(snapshotPath).delete()
+                            } catch (z: Exception) {
 
+                            }
                         }
+                        post {
+                            AppStorageManager.update(genKey, path)
+                            path(path)
+                        }
+                    } catch (e: Exception) {
+                        post { setImageResource(R.drawable.fastdroid_holder) }
+                        e.printStackTrace()
                     }
-                    AppStorageManager.update(genKey, path)
-                    path(path)
-                } catch (e: Exception) {
-                    setImageResource(R.drawable.fastdroid_holder)
-                    e.printStackTrace()
-                }
+                }.start()
             }
         }
     }
 
     fun Context.saveImage(
         url: String,
+        maxSize: Int = 1024,
         filename: String = UUID.randomUUID().toString() + ".jpg"
     ): String {
         return saveBitmap(
@@ -77,7 +81,7 @@ object GlideUtils {
                 .placeholder(R.drawable.fastdroid_holder) // need placeholder to avoid issue like glide annotations
                 .error(android.R.drawable.stat_notify_error) // need error to avoid issue like glide annotations
                 .submit()
-                .get(), filename
+                .get(), maxSize, filename
         )
     }
 }

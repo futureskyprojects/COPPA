@@ -2,6 +2,7 @@ package me.vistark.fastdroid.utils
 
 import android.animation.ObjectAnimator
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -11,6 +12,7 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.TimePicker
 import androidx.cardview.widget.CardView
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
@@ -23,6 +25,9 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.from
 import me.vistark.fastdroid.utils.VibrateUtils.vibrate
+import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
+import me.vistark.fastdroid.utils.ViewExtension.bindTimePicker
+import me.vistark.fastdroid.utils.ViewExtension.showDatePicker
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import java.util.*
 
@@ -38,37 +43,98 @@ object ViewExtension {
 //        this.visibility = View.VISIBLE
     }
 
-    fun View.bindDatePicker(date: Date = Calendar.getInstance().time, onResult: ((Date) -> Unit)) {
-        this.onTap {
+    fun View.binDateTimePicker(
+        date: Date = Calendar.getInstance().time,
+        onResult: ((Date) -> Unit)
+    ) {
+        onTap {
             HideKeyboard()
-            val calendar = Calendar.getInstance()
-            calendar.time = date
-            val x = DatePickerDialog(
-                this.context,
-                { v, year, month, dayOfMonth ->
-                    val dateRes = Date().from(year, month, dayOfMonth)
+            showDatePicker(date) { pickedDate ->
+                val calendar = Calendar.getInstance()
+                calendar.time = pickedDate
+                showTimePicker(pickedDate) { hourOfDay, minutes ->
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    calendar.set(Calendar.MINUTE, minutes)
+                    calendar.set(Calendar.SECOND, 0)
+
+                    onResult.invoke(calendar.time)
+
                     if (this is TextView) {
-                        this.text = dateRes.format()
+                        this.text = calendar.time.format("yyyy-MM-dd HH:mm:ss")
                     }
-                    onResult.invoke(dateRes)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            )
-            x.datePicker.init(
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ) { v, year, month, dayOfMonth ->
+                }
+            }
+        }
+    }
+
+    fun View.showDatePicker(date: Date = Calendar.getInstance().time, onResult: ((Date) -> Unit)) {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val x = DatePickerDialog(
+            this.context,
+            { v, year, month, dayOfMonth ->
                 val dateRes = Date().from(year, month, dayOfMonth)
                 if (this is TextView) {
                     this.text = dateRes.format()
                 }
                 onResult.invoke(dateRes)
-                x.cancel()
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        x.datePicker.init(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ) { v, year, month, dayOfMonth ->
+            val dateRes = Date().from(year, month, dayOfMonth)
+            if (this is TextView) {
+                this.text = dateRes.format()
             }
-            x.show()
+            onResult.invoke(dateRes)
+            x.cancel()
+        }
+        x.show()
+    }
+
+    fun View.bindDatePicker(date: Date = Calendar.getInstance().time, onResult: ((Date) -> Unit)) {
+        this.onTap {
+            HideKeyboard()
+            showDatePicker(date, onResult)
+        }
+    }
+
+    fun View.showTimePicker(
+        date: Date = Calendar.getInstance().time,
+        onResult: ((Int, Int) -> Unit)
+    ) {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val x = TimePickerDialog(
+            context,
+            { view, hourOfDay, minute ->
+                if (this is TextView) {
+                    this.text = String.format("%2d:%2d", hourOfDay, minute)
+                }
+                onResult.invoke(hourOfDay, minute)
+            }, calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE), true
+        )
+        x.updateTime(
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE)
+        )
+        x.show()
+    }
+
+    fun View.bindTimePicker(
+        date: Date = Calendar.getInstance().time,
+        onResult: ((Int, Int) -> Unit)
+    ) {
+        this.onTap {
+            HideKeyboard()
+            showTimePicker(date, onResult)
         }
     }
 

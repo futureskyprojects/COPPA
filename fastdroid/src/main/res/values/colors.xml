@@ -27,4 +27,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="fastDroidDangerDisableColor">#3CF64E60</color>
+    <color name="fastDroidPrimaryDisableColor">#3C3699FF</color>
+    <color name="fastDroidSuccessDisableColor">#3C1BC5BD</color>
+    <color name="fastDroidWarningDisableColor">#3CFFA800</color>
 </resources>

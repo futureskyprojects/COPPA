@@ -20,4 +20,15 @@
     <string name="RequestPermission">RequestPermission</string>
     <string name="LoginFaild_UnexpectedError">LoginFaild_UnexpectedError</string>
     <string name="UnxptectedError">UnxptectedError</string>
+    <string name="CanNotGetSpeciesCategory">CanNotGetSpeciesCategory</string>
+    <string name="NotFound">NotFound</string>
+    <string name="YouMustConnectToInternetToHveFinishAndSyncCurrentTrip">YouMustConnectToInternetToHveFinishAndSyncCurrentTrip</string>
+    <string name="LengIsInvalid">LengIsInvalid</string>
+    <string name="WeightIsInvalid">WeightIsInvalid</string>
+    <string name="YouMustPickAtleast_ImageAboutThisSpecies">YouMustPickAtleast%dImageAboutThisSpecies</string>
+    <string name="PleaseWaitForAFewMinutesSystemIsDetectYourLocationCoordinates">PleaseWaitForAFewMinutesSystemIsDetectYourLocationCoordinates</string>
+    <string name="YouMustCorrectAllFiled">YouMustCorrectAllFiled</string>
+    <string name="SavingYourCatchedSpecies">SavingYourCatchedSpecies</string>
+    <string name="SaveSpeciesSuccessful">SaveSpeciesSuccessful</string>
+    <string name="Sync_Trip">Sync%dTrip(s)</string>
 </resources>

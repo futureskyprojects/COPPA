@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +17,7 @@ import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import me.vistark.fastdroid.R
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver.Companion.FASTDROID_BROADCAST_ACTION
 import me.vistark.fastdroid.language.LanguageConfig
@@ -22,6 +25,7 @@ import me.vistark.fastdroid.utils.FastdroidContextWrapper
 import me.vistark.fastdroid.utils.FastdroidContextWrapper.Companion.forOnCreate
 import me.vistark.fastdroid.utils.MultipleLanguage.autoTranslate
 import me.vistark.fastdroid.utils.PermissionUtils.onRequestAllPermissionsResult
+import me.vistark.fastdroid.utils.UriUtils.bitmap
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 
@@ -92,8 +96,6 @@ abstract class FastdroidActivity(
         // Cấu hình quay
         requestedOrientation = reqOri
 
-        // Đẩy màn hình layout lên khi xuất hiện bàn phím
-//        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     override fun attachBaseContext(newBase: Context?) {
@@ -137,18 +139,18 @@ abstract class FastdroidActivity(
     }
 
     //region PickImage
-    private val REQUEST_CODE_PICK_IMAGE: Int = 324212
+    private val REQUEST_CODE_PICK_IMAGE: Int = 20498
 
-    var pickImageBitmapResult: ((Bitmap?) -> Unit)? = null
-    private fun pickImageForBitmap(pickImageResult: ((Bitmap?) -> Unit)) {
+    private var pickImageBitmapResult: ((Bitmap?) -> Unit)? = null
+    fun pickImageForBitmap(pickImageResult: ((Bitmap?) -> Unit)) {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
         this.pickImageBitmapResult = pickImageResult
     }
 
-    var pickImageUriResult: ((Uri?) -> Unit)? = null
-    private fun pickImageForUri(pickImageResult: ((Uri?) -> Unit)) {
+    private var pickImageUriResult: ((Uri) -> Unit)? = null
+    fun pickImageForUri(pickImageResult: ((Uri) -> Unit)) {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
@@ -160,24 +162,15 @@ abstract class FastdroidActivity(
         super.onActivityResult(requestCode, resultCode, data)
         // Pick image for bitmap or uri
         if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK) {
-            pickImageUriResult?.invoke(data?.data)
+            data?.data?.apply {
+                pickImageUriResult?.invoke(this)
+            }
+
             if (data?.data != null) {
-                pickImageBitmapResult?.invoke(
-                    try {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            ImageDecoder.decodeBitmap(
-                                ImageDecoder.createSource(
-                                    this.contentResolver,
-                                    data.data!!
-                                )
-                            )
-                        } else {
-                            MediaStore.Images.Media.getBitmap(this.contentResolver, data.data)
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                )
+                data.data?.apply {
+                    pickImageBitmapResult?.invoke(this.bitmap(this@FastdroidActivity))
+                }
+
             } else {
                 pickImageBitmapResult?.invoke(null)
             }
@@ -186,6 +179,17 @@ abstract class FastdroidActivity(
 
     fun startSingleActivity(intent: Intent) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+    }
+
+    fun <T> startSingleActivity(clazz: Class<T>) {
+        val intent: Intent = Intent(this, clazz)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+    }
+
+    fun <T> startActivity(clazz: Class<T>) {
+        val intent = Intent(this, clazz)
         startActivity(intent)
     }
 

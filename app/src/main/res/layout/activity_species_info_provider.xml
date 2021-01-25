@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#30000000"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context=".ui.specices_info_provider.SpeciesInfoProviderActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/rlContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="@dimen/space_default"
+        android:layout_marginVertical="60dp"
+        android:background="@drawable/bg_loading_overlay"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingHorizontal="@dimen/space_default"
+        android:paddingVertical="10dp">
+
+        <LinearLayout
+            android:id="@+id/gr1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-5dp">
+
+                <TextView
+                    android:id="@+id/asTvTitle"
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:padding="@dimen/space_sm"
+                    android:singleLine="true"
+                    android:text="Species" />
+
+                <ImageView
+                    android:id="@+id/asIvBackIcon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_back_black" />
+
+                <ImageView
+                    android:id="@+id/asIvAddImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_add_image_black" />
+            </RelativeLayout>
+
+            <include layout="@layout/fastdroid_line" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/gr2"
+            android:layout_below="@id/gr1"
+            android:layout_marginVertical="@dimen/space_sm">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="ImagesOfSpecies" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPickedImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/asipLnNoPickedImages"
+                    style="@style/Fastdroid.Button.Primary.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="0dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Press" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/space_sm"
+                        android:src="@drawable/ic_add_image_black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="to add" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:text="SpeciesLength" />
+
+                <EditText
+                    android:id="@+id/edtSpeciesLength"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="SpeciesLength"
+                    android:inputType="numberDecimal"
+                    android:lines="1"
+                    android:textAllCaps="true" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SpeciesWeight" />
+
+                <EditText
+                    android:id="@+id/edtSpeciesWeight"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="SpeciesWeight"
+                    android:inputType="numberDecimal"
+                    android:lines="1"
+                    android:textAllCaps="true" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CatchedAt" />
+
+                <TextView
+                    android:id="@+id/tvCatchedAt"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="CatchedAt" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/gr2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <include layout="@layout/fastdroid_line" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/space_sm"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/asBtnClose"
+                    style="@style/Fastdroid.Button.Danger.Light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:padding="@dimen/space_sm"
+                    android:text="Close"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/asBtnConfirm"
+                    style="@style/Fastdroid.Button.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_marginLeft="@dimen/space_sm"
+                    android:layout_marginBottom="0dp"
+                    android:enabled="false"
+                    android:padding="@dimen/space_sm"
+                    android:text="Confirm" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

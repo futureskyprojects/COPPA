@@ -1,10 +1,11 @@
 package me.vistark.fastdroid.utils
 
 import android.view.View
+import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.ScaleAnimation
-import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomRight
-import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomRight
+
 
 object AnimationUtils {
     //region Do on End
@@ -216,6 +217,27 @@ object AnimationUtils {
         anim.duration = duration
         this.startAnimation(anim)
     }
-
     //endregion
+
+    fun View.fadeIn(duration: Long = 300L, onFinished: (() -> Unit)? = null) {
+        val fadeIn: Animation = AlphaAnimation(0F, 1F)
+        fadeIn.interpolator = DecelerateInterpolator() //add this
+        fadeIn.duration = duration
+        fadeIn.doOnEnd {
+            this.visibility = View.VISIBLE
+            onFinished?.invoke()
+        }
+        this.startAnimation(fadeIn)
+    }
+
+    fun View.fadeOut(duration: Long = 300L, onFinished: (() -> Unit)? = null) {
+        val fadeOut: Animation = AlphaAnimation(1F, 0F)
+        fadeOut.interpolator = DecelerateInterpolator() //add this
+        fadeOut.duration = duration
+        fadeOut.doOnEnd {
+            this.visibility = View.GONE
+            onFinished?.invoke()
+        }
+        this.startAnimation(fadeOut)
+    }
 }
