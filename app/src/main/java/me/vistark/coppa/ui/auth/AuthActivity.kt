@@ -15,6 +15,7 @@ import me.vistark.coppa.application.RuntimeStorage.CurrentUsername
 import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
 import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
 import me.vistark.coppa._core.api.APIService
+import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.ui.home.HomeActivity
 import me.vistark.fastdroid.core.api.JwtAuth.updateJwtAuth
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
@@ -26,6 +27,7 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopLeft
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.EdittextUtils.required
 import me.vistark.fastdroid.utils.EdittextUtils.validate
+import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.TimerUtils.startAfter
 import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
@@ -100,6 +102,16 @@ class AuthActivity : FastdroidActivity(
 
     //region Bind và xử lý
     private fun bindDtoForLogin() {
+        if (!isInternetAvailable()) {
+            Toasty.error(
+                this,
+                L(getString(R.string.YouMustConnectToInternetForSignIn)),
+                Toasty.LENGTH_SHORT,
+                true
+            ).show()
+            return
+        }
+
         asiUsername.onTextChanged {
             aaTvAlertDanger.hide()
             loginRequestDTO.username = it
@@ -120,11 +132,7 @@ class AuthActivity : FastdroidActivity(
                 aaTvAlertDanger.text = err
                 aaTvAlertDanger.show()
             } else {
-                val loading = showLoadingBase()
-                startAfter(3000) {
-                    loading.dismiss()
-                    loginProcessing()
-                }
+                loginProcessing()
             }
         }
     }
@@ -175,6 +183,16 @@ class AuthActivity : FastdroidActivity(
         }
 
         asuBtnSignUp.onTap {
+            if (!isInternetAvailable()) {
+                Toasty.error(
+                    this,
+                    L(getString(R.string.YouMustConnectToInternetForRegister)),
+                    Toasty.LENGTH_SHORT,
+                    true
+                ).show()
+                return@onTap
+            }
+
             val errors = arrayListOf(
                 asUsername.required(L(getString(R.string.YouMustInputYourUserName))),
                 asUsername.validate(
@@ -208,19 +226,43 @@ class AuthActivity : FastdroidActivity(
                 GlobalScope.launch {
                     try {
                         val successBody = APIService().APIs.postRegister(registerRequestDTO).await()
-                        println(Gson().toJson(successBody))
-
-                    } catch (he: HttpException) {
-                        TODO("Cần giải quyết vấn đề parse tại đây")
+                        if (successBody.status == 200 && successBody.result != null) {
+                            // Cập nhật thông tin xác thực
+                            updateJwtAuth(
+                                successBody.result!!.token.original.accessToken,
+                                successBody.result!!.token.original.tokenType
+                            )
+                            // Thông báo thành công
+                            if (successBody.message.isNotEmpty()) {
+                                CurrentUsername = loginRequestDTO.username
+                                runOnUiThread {
+                                    Toasty.success(
+                                        this@AuthActivity.applicationContext,
+                                        successBody.message.first(),
+                                        Toasty.LENGTH_SHORT,
+                                        true
+                                    ).show()
+                                }
+                            }
+                            startHome()
+                        } else {
+                            if (successBody.message.isNotEmpty()) {
+                                aaTvAlertDanger.post {
+                                    aaTvAlertDanger.text = successBody.message.first()
+                                    aaTvAlertDanger.show()
+                                }
+                            }
+                        }
                     } catch (e: Exception) {
                         e.printStackTrace()
                         aaTvAlertDanger.post {
                             aaTvAlertDanger.text =
                                 L(getString(R.string.RegisterFaild_UnexpectedError))
                         }
-                    }
-                    runOnUiThread {
-                        loading.dismiss()
+                    } finally {
+                        runOnUiThread {
+                            loading.dismiss()
+                        }
                     }
                 }
             }
@@ -229,6 +271,7 @@ class AuthActivity : FastdroidActivity(
     //endregion
 
     private fun loginProcessing() {
+        val loading = showLoadingBase()
         GlobalScope.launch {
             try {
                 val res = APIService().APIs.postLogin(loginRequestDTO).await()
@@ -240,6 +283,7 @@ class AuthActivity : FastdroidActivity(
                     )
                     // Thông báo thành công
                     if (res.message.isNotEmpty()) {
+                        CurrentUsername = loginRequestDTO.username
                         runOnUiThread {
                             Toasty.success(
                                 this@AuthActivity.applicationContext,
@@ -263,6 +307,10 @@ class AuthActivity : FastdroidActivity(
                 aaTvAlertDanger.post {
                     aaTvAlertDanger.text = L(getString(R.string.LoginFaild_UnexpectedError))
                     aaTvAlertDanger.show()
+                }
+            } finally {
+                runOnUiThread {
+                    loading.dismiss()
                 }
             }
         }

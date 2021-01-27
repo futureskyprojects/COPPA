@@ -16,14 +16,14 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Username" />
+            android:text="@string/username" />
 
         <EditText
             android:id="@+id/asiUsername"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="@string/username"
             android:inputType="text"
             android:lines="1" />
 
@@ -35,14 +35,15 @@
                 style="@style/Fastdroid.TextView.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password" />
+                android:text="@string/password" />
 
             <TextView
                 style="@style/Fastdroid.TextView.Label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:text="ForgotPassword?"
+                android:text="@string/forgotpassword"
                 android:textColor="@color/fastDroidPrimaryColor" />
         </RelativeLayout>
 
@@ -51,7 +52,7 @@
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:lines="1" />
 
@@ -61,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Login" />
+            android:text="@string/login" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -79,7 +80,7 @@
                 android:layout_centerHorizontal="true"
                 android:background="#FFF"
                 android:paddingHorizontal="10dp"
-                android:text="OR"
+                android:text="@string/or"
                 android:textColor="@color/fastDroidTextColor" />
         </RelativeLayout>
 
@@ -89,6 +90,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Register" />
+            android:text="@string/register" />
     </LinearLayout>
 </ScrollView>

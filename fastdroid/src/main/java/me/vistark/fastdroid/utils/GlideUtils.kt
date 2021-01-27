@@ -48,7 +48,10 @@ object GlideUtils {
             if (isInternetAvailable()) {
                 Thread {
                     try {
-                        val path = context.saveImage(url)
+                        val path = context.saveImage(
+                            url,
+                            filename = "/cache/${UUID.randomUUID()}.jpg"
+                        )
                         if (path.isNotEmpty()) {
                             try {
                                 File(snapshotPath).delete()

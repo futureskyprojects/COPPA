@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/Fastdroid"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ui.profile_update.ProfileUpdateActivity"
+            android:theme="@style/Fastdroid.Transparent" />
         <activity
             android:name=".ui.species_sync_review.SpeciesSyncReviewActivity"
             android:theme="@style/Fastdroid.Transparent" />
@@ -54,7 +58,6 @@
         <activity
             android:name=".ui.seaport.SeaPortActivity"
             android:theme="@style/Fastdroid.Transparent" />
-        <activity android:name=".ui.profile.ProfileActivity" />
         <activity
             android:name=".ui.species.SpeciesActivity"
             android:theme="@style/Fastdroid.Transparent" />

@@ -16,7 +16,7 @@ import retrofit2.http.*
 
 interface IAPIService : IFastdroidAPI {
     @POST("register")
-    fun postRegister(@Body dto: RegisterRequestDTO): Call<SignupSuccessResponse>
+    fun postRegister(@Body dto: RegisterRequestDTO): Call<ResponseWrapper<SignupSuccessResponse>>
 
     @POST("login")
     fun postLogin(@Body dto: LoginRequestDTO): Call<ResponseWrapper<LoginSuccessResponse>>

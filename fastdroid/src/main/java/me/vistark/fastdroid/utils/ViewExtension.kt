@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -12,7 +13,7 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.TimePicker
+import androidx.appcompat.widget.PopupMenu
 import androidx.cardview.widget.CardView
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
@@ -25,14 +26,26 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.from
 import me.vistark.fastdroid.utils.VibrateUtils.vibrate
-import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
-import me.vistark.fastdroid.utils.ViewExtension.bindTimePicker
-import me.vistark.fastdroid.utils.ViewExtension.showDatePicker
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import java.util.*
 
 
 object ViewExtension {
+    fun View.bindPopupMenu(menuResId: Int, onMenuItemClicked: (Int) -> Boolean) {
+        onTap {
+            //creating a popup menu
+            val popup = PopupMenu(context, this)
+            //inflating menu from xml resource
+            popup.inflate(menuResId)
+            //adding click listener
+            popup.setOnMenuItemClickListener { item ->
+                return@setOnMenuItemClickListener onMenuItemClicked(item.itemId)
+            }
+            //displaying the popup
+            popup.show()
+        }
+    }
+
     fun View.hide() {
         scaleDownCenter(150)
 //        this.visibility = View.GONE

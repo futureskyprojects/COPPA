@@ -11,10 +11,16 @@ object JwtAuth {
         CurrentToken = token
         CurrentTokenType = tokenType
         AuthorizationKey = authKey
+        AuthorizationKey = "Authorization"
     }
 
     fun isAuthenticated(): Boolean {
         return CurrentToken.isNotEmpty() && CurrentTokenType.isNotEmpty() && AuthorizationKey.isNotEmpty()
+    }
+
+    fun clearAuthentication() {
+        CurrentToken = ""
+        CurrentTokenType = "Bearer"
     }
 
     var BaseUrl = "https://vistark.me"

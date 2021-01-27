@@ -24,6 +24,7 @@ import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.ObjectUtils.clone
 import me.vistark.fastdroid.utils.PermissionUtils.isPermissionGranted
+import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.deleteOnExists
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -38,7 +39,7 @@ import kotlin.collections.ArrayList
 class BackgroundService : FastdroidService(
     "COPPA",
     R.mipmap.ic_launcher_round,
-    L("CoppaIsRunningInBackground")
+    L("AppIsRunningInBackground")
 ), LocationListener {
 
     var isSyncing = false
@@ -164,6 +165,13 @@ class BackgroundService : FastdroidService(
             try {
                 val res = apis.postSync(TripSyncDTO(tripSync)).await()
                 if (res.status == 200) {
+                    // Xóa hết cá tệp tin trong này
+                    tripSync.hauls.forEach { h ->
+                        h.images.split(",").forEach { img ->
+                            img.deleteOnExists()
+                        }
+                    }
+                    // Xóa chuyến
                     removeTripSync(tripSync)
                 }
                 internetTimerChecker()

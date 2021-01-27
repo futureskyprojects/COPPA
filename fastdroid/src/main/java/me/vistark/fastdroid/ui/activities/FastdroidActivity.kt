@@ -6,9 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.ImageDecoder
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,8 +13,9 @@ import android.provider.MediaStore
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
-import me.vistark.fastdroid.R
+import androidx.core.net.toUri
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver.Companion.FASTDROID_BROADCAST_ACTION
 import me.vistark.fastdroid.language.LanguageConfig
@@ -28,6 +26,10 @@ import me.vistark.fastdroid.utils.PermissionUtils.onRequestAllPermissionsResult
 import me.vistark.fastdroid.utils.UriUtils.bitmap
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 import me.vistark.fastdroid.utils.storage.AppStorageManager
+import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.createTempFile
+import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.initFileUtils
+import java.io.File
+import java.util.*
 
 
 abstract class FastdroidActivity(
@@ -59,6 +61,8 @@ abstract class FastdroidActivity(
                 )
             )
         }
+
+        initFileUtils()
 
         // Khởi tạo bộ lưu trữ shared preference mặc định
         AppStorageManager.initialize(this)
@@ -158,6 +162,68 @@ abstract class FastdroidActivity(
     }
     //endregion
 
+    //region take photo
+    private val REQUEST_CODE_TAKE_PHOTO: Int = 20499
+    private var latestTakedPhotoPath: String = ""
+    private var latestTakedPhotoUri: Uri? = null
+
+    private var takePhotoUriResult: ((Uri?) -> Unit)? = null
+    fun takePhotoForUri(takePhotoUriResult: ((Uri?) -> Unit)) {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = createTempFile(UUID.randomUUID().toString() + ".jpg")
+                if (photoFile == null) {
+                    takePhotoUriResult.invoke(null)
+                } else {
+                    // Continue only if the File was successfully created
+                    photoFile.also {
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this,
+                            "me.vistark.fastdroid.fileprovider",
+                            it
+                        )
+                        latestTakedPhotoPath = photoFile.absolutePath
+                        latestTakedPhotoUri = photoURI
+                        this.takePhotoUriResult = takePhotoUriResult
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PHOTO)
+                    }
+                }
+            }
+        }
+    }
+
+    private var takePhotoPathResult: ((String) -> Unit)? = null
+    fun takePhotoForPath(takePhotoPathResult: ((String) -> Unit)) {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = createTempFile(UUID.randomUUID().toString() + ".jpg")
+                if (photoFile == null) {
+                    takePhotoPathResult.invoke("")
+                } else {
+                    // Continue only if the File was successfully created
+                    photoFile.also {
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this,
+                            "me.vistark.fastdroid.fileprovider",
+                            it
+                        )
+                        latestTakedPhotoPath = photoFile.absolutePath
+                        latestTakedPhotoUri = photoURI
+                        this.takePhotoPathResult = takePhotoPathResult
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PHOTO)
+                    }
+                }
+            }
+        }
+    }
+    //endregion
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Pick image for bitmap or uri
@@ -174,6 +240,11 @@ abstract class FastdroidActivity(
             } else {
                 pickImageBitmapResult?.invoke(null)
             }
+        }
+
+        if (requestCode == REQUEST_CODE_TAKE_PHOTO && resultCode == RESULT_OK) {
+            this.takePhotoPathResult?.invoke(latestTakedPhotoPath)
+            this.takePhotoUriResult?.invoke(latestTakedPhotoUri)
         }
     }
 

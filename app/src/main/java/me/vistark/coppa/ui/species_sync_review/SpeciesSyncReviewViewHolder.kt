@@ -6,14 +6,10 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import me.vistark.coppa.R
-import me.vistark.coppa._core.utils.CorrectURL.correctPath
 import me.vistark.coppa.application.RuntimeStorage
-import me.vistark.coppa.domain.entity.Species
-import me.vistark.coppa.domain.entity.SpeciesCategory
 import me.vistark.coppa.domain.entity.SpeciesSync
 import me.vistark.fastdroid.utils.AnimationUtils.fadeIn
 import me.vistark.fastdroid.utils.AnimationUtils.fadeOut
-import me.vistark.fastdroid.utils.GlideUtils.load
 import me.vistark.fastdroid.utils.GlideUtils.path
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import java.util.*

@@ -3,7 +3,7 @@ package me.vistark.coppa._core.utils
 import me.vistark.coppa._core.api.APIService
 
 object CorrectURL {
-    fun String.correctPath(): String {
+    fun String.coppaCorrectResourcePath(): String {
         if (this.startsWith("http"))
             return this
         if (this.startsWith("/"))

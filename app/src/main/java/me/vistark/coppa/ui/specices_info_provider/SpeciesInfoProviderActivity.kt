@@ -2,7 +2,11 @@ package me.vistark.coppa.ui.specices_info_provider
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_species.asBtnConfirm
@@ -13,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_species.rlRoot
 import kotlinx.android.synthetic.main.activity_species_info_provider.*
 import me.vistark.coppa.R
 import me.vistark.coppa.application.DefaultValue.MinImageRequest
+import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.components.picked_images_preview.PickedImagePreviewAdapter
 import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.SpeciesSync
@@ -30,8 +35,12 @@ import me.vistark.fastdroid.utils.MultipleLanguage
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.UriUtils.saveImage
 import me.vistark.fastdroid.utils.ViewExtension.binDateTimePicker
+import me.vistark.fastdroid.utils.ViewExtension.bindPopupMenu
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
+import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SpeciesInfoProviderActivity :
     FastdroidActivity(R.layout.activity_species_info_provider, isCanAutoTranslate = true) {
@@ -57,6 +66,12 @@ class SpeciesInfoProviderActivity :
         rlContainer.scaleUpCenter()
 
 
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.ipoCamera)?.title = L(getString(R.string.camera))
+        menu?.findItem(R.id.ipoGallery)?.title = L(getString(R.string.gallery))
+        return super.onPrepareOptionsMenu(menu)
     }
 
     private fun pickedImages() {
@@ -95,7 +110,7 @@ class SpeciesInfoProviderActivity :
         if (selectedSpeciesId <= 0) {
             Toasty.error(
                 this,
-                MultipleLanguage.L(getString(R.string.CanNotGetSpeciesCategory)),
+                L(getString(R.string.CanNotGetSpeciesCategory)),
                 Toasty.LENGTH_SHORT,
                 true
             ).show()
@@ -116,11 +131,28 @@ class SpeciesInfoProviderActivity :
         asIvBackIcon.onTap {
             animateFinish()
         }
-        asIvAddImage.onTap {
-            // Pick image/Take photo
-            pickImageForUri {
-                pickedImagesUris.add(it)
-                updatePickedImages()
+        asIvAddImage.bindPopupMenu(R.menu.image_picker_options) {
+            when (it) {
+                R.id.ipoCamera -> {
+                    takePhotoForUri { uri ->
+                        uri?.apply {
+                            pickedImagesUris.add(this)
+                            updatePickedImages()
+                        }
+                    }
+                    return@bindPopupMenu true
+                }
+                R.id.ipoGallery -> {
+                    // Pick image/Take photo
+                    pickImageForUri {
+                        pickedImagesUris.add(it)
+                        updatePickedImages()
+                    }
+                    return@bindPopupMenu true
+                }
+                else -> {
+                    return@bindPopupMenu false
+                }
             }
         }
 
@@ -210,7 +242,10 @@ class SpeciesInfoProviderActivity :
         Thread {
             // Lưu danh sách các ảnh này vào cache
             pickedImagesUris.forEach { uri ->
-                uri.saveImage(this).apply {
+                uri.saveImage(
+                    this,
+                    filename = "/snapshot/data/trip_${RuntimeStorage.CurrentTripSync?.getDesTime()}/${UUID.randomUUID()}.jpg"
+                ).apply {
                     if (this.isNotEmpty()) {
                         snapshotPickedImages.add(this)
                     }

@@ -41,7 +41,7 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:padding="@dimen/space_sm"
                 android:singleLine="true"
-                android:text="SpeciesCategory" />
+                android:text="@string/speciescategory" />
 
             <include layout="@layout/fastdroid_line" />
         </LinearLayout>
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="0dp"
                     android:padding="@dimen/space_sm"
-                    android:text="Close" />
+                    android:text="@string/close" />
 
             </LinearLayout>
         </LinearLayout>

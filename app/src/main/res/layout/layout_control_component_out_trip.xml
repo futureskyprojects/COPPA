@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
-                android:text="Lịch sử chuyến đi" />
+                android:text="@string/tripedhistory" />
 
             <Button
                 android:id="@+id/lccotBtnCreateNewTrip"
@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:text="Tạo chuyến đi biển mới" />
+                android:text="@string/startnewtrip" />
         </LinearLayout>
 
     </LinearLayout>

@@ -1,9 +1,314 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#30000000"
+    android:clickable="true"
+    android:focusable="true"
     tools:context=".ui.profile_update.ProfileUpdateActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="@dimen/space_default"
+        android:layout_marginVertical="60dp"
+        android:background="@drawable/bg_loading_overlay"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingVertical="10dp">
+
+        <LinearLayout
+            android:id="@+id/gr1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-5dp">
+
+                <TextView
+                    android:id="@+id/asTvTitle"
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:padding="@dimen/space_sm"
+                    android:singleLine="true"
+                    android:text="@string/yourinfomation" />
+
+                <ImageView
+                    android:id="@+id/asIvBackIcon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:layout_marginRight="@dimen/space_sm"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_close_circle_black" />
+
+                <ImageView
+                    android:id="@+id/asIvResetPasswordIcon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_marginLeft="@dimen/space_sm"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_change_password_black" />
+
+                <ImageView
+                    android:id="@+id/asIvBackToProfileUpdate"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:layout_marginLeft="@dimen/space_sm"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@drawable/ic_back_black" />
+            </RelativeLayout>
+
+            <include layout="@layout/fastdroid_line" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/srvForUpdatePassword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/gr2"
+            android:layout_below="@id/gr1"
+            android:layout_marginVertical="@dimen/space_sm">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/space_default"
+                android:paddingBottom="30dp">
+
+                <TextView
+                    android:id="@+id/aaTvPassword"
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/password" />
+
+                <EditText
+                    android:id="@+id/aaPassword"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:lines="1" />
+
+                <TextView
+                    android:id="@+id/aaTvConfirmPassword"
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/confirmpassword" />
+
+                <EditText
+                    android:id="@+id/aaConfirmPassword"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/confirmpassword"
+                    android:inputType="textPassword"
+                    android:lines="1" />
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/srvForUpdateProfileInfo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/gr2"
+            android:layout_below="@id/gr1"
+            android:layout_marginVertical="@dimen/space_sm">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/space_default"
+                android:paddingBottom="30dp">
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email" />
+
+                <EditText
+                    android:id="@+id/aaEmail"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:lines="1" />
+
+                <TextView
+                    android:id="@+id/aaTvPhone"
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone" />
+
+                <EditText
+                    android:id="@+id/aaPhone"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Phone"
+                    android:inputType="phone"
+                    android:lines="1" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ShipOwner" />
+
+                <EditText
+                    android:id="@+id/aaShipOwner"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:layout_marginRight="@dimen/space_sm"
+                    android:layout_weight="1"
+                    android:hint="ShipOwner"
+                    android:inputType="textPersonName|textAutoComplete|textCapWords"
+                    android:lines="1" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Captain" />
+
+                <EditText
+                    android:id="@+id/aaCaptain"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:layout_marginRight="@dimen/space_sm"
+                    android:layout_weight="1"
+                    android:hint="Captain"
+                    android:inputType="textPersonName|textAutoComplete|textCapWords"
+                    android:lines="1" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FishingLicense" />
+
+                <EditText
+                    android:id="@+id/aaFishLicense"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="FishingLicense"
+                    android:inputType="textCapCharacters"
+                    android:lines="1"
+                    android:textAllCaps="true" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duration" />
+
+                <TextView
+                    android:id="@+id/aaDuration"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Duration" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/moreLanguages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/gr2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <include layout="@layout/fastdroid_line" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include
+                    layout="@layout/fastdroid_circle_avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/space_default"
+                    android:layout_marginLeft="@dimen/space_default" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:layout_marginEnd="@dimen/space_default"
+                    android:layout_marginRight="@dimen/space_default"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/asBtnSignOut"
+                        style="@style/Fastdroid.Button.Danger.Light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="0dp"
+                        android:padding="@dimen/space_sm"
+                        android:text="SignOut" />
+
+                    <Button
+                        android:id="@+id/asBtnConfirm"
+                        style="@style/Fastdroid.Button.Primary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_sm"
+                        android:layout_marginLeft="@dimen/space_sm"
+                        android:layout_marginBottom="0dp"
+                        android:padding="@dimen/space_sm"
+                        android:text="Confirm" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

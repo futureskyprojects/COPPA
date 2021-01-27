@@ -33,7 +33,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:paddingVertical="3dp"
             android:singleLine="true"
-            android:text="Loài cá XYZ" />
+            android:text="@string/lo_i_c_xyz" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

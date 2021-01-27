@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import me.vistark.coppa.R
-import me.vistark.coppa._core.utils.CorrectURL.correctPath
+import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.domain.entity.SpeciesCategory
 import me.vistark.fastdroid.utils.GlideUtils.load
 
@@ -16,7 +16,7 @@ class CategoryViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val isciTvSpeciesCategoryName: TextView = v.findViewById(R.id.isciTvSpeciesCategoryName)
 
     fun bind(speciesCategory: SpeciesCategory) {
-        isciIvSpeciesCategoryImage.load(speciesCategory.image.correctPath(), true)
+        isciIvSpeciesCategoryImage.load(speciesCategory.image.coppaCorrectResourcePath(), true)
         isciTvSpeciesCategoryName.text = speciesCategory.title
         isciTvSpeciesCategoryName.isSelected = true
     }

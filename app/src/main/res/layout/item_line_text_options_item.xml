@@ -24,7 +24,7 @@
             android:padding="@dimen/space_default"
             android:paddingVertical="3dp"
             android:singleLine="true"
-            android:text="Loài cá XYZ"
+            android:text="@string/lo_i_c_xyz"
             android:textSize="16sp" />
     </RelativeLayout>
 

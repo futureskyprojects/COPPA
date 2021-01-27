@@ -40,7 +40,6 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:elevation="4dp"
             android:src="@drawable/ic_remove_red" />
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

@@ -2,13 +2,53 @@ package me.vistark.fastdroid.utils.storage
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.util.*
 
 object FastdroidFileUtils {
+    var CONTENT_ROOT = ""
+    var TEMP_DIR = ""
+
+    fun Context.initFileUtils() {
+        CONTENT_ROOT = externalCacheDir?.path ?: ""
+        TEMP_DIR = (CONTENT_ROOT + File.separator + ".vistark_temp").replace("//", "/")
+    }
+
+    fun String.correctPath(vararg name: String = emptyArray()): String {
+        var temp = this
+        name.forEach {
+            temp += File.separator + it
+        }
+        temp = temp.replace("//", "/")
+        return temp
+    }
+
+
+    fun String.copyTo(dst: String): String {
+        val f1 = File(this)
+        val f2 = File(dst)
+
+        try {
+            if (f1.exists())
+                return ""
+            return f1.copyTo(f2, true).absolutePath
+        } catch (e: Exception) {
+            return ""
+        }
+    }
+
+    fun String.deleteOnExists(): Boolean {
+        val f = File(this)
+        if (!f.exists())
+            return true
+
+        return if (f.isDirectory) {
+            f.deleteRecursively()
+        } else {
+            f.delete()
+        }
+    }
+
     fun Bitmap.resize(maxSize: Int): Bitmap? {
         val ratio = width.toFloat() / height.toFloat()
         if (width <= maxSize && height <= maxSize)
@@ -18,6 +58,25 @@ object FastdroidFileUtils {
         } else {
             return Bitmap.createScaledBitmap(this, (ratio * maxSize).toInt(), maxSize, false)
         }
+    }
+
+    fun Context.createTempFile(fileName: String): File? {
+        var dest = externalCacheDir?.path ?: ""
+        if (dest.isEmpty()) {
+            return null
+        }
+        dest += File.separator + ".vistark_temp" + File.separator + fileName
+        dest = dest.replace("//", "/")
+
+        val parentPath = File(dest).parent ?: ""
+        val f = File(parentPath)
+        if (!f.exists()) f.mkdirs()
+        val res = File(dest)
+        if (res.exists())
+            res.delete()
+        res.createNewFile()
+        res.deleteOnExit()
+        return res
     }
 
     fun Context.saveBitmap(

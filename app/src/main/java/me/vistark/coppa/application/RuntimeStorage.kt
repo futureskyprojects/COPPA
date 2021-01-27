@@ -4,8 +4,11 @@ import me.vistark.coppa.domain.entity.*
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 
 object RuntimeStorage {
-    fun clean() {
-
+    fun clear() {
+        TripSyncs = emptyArray()
+        CurrentTripSync = null
+        TripLogs = emptyArray()
+        CurrentCaptainProfile = CaptainProfile()
     }
 
     var TripSyncs: Array<TripSync>

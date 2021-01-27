@@ -23,13 +23,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vistark.coppa.R
 import me.vistark.coppa._core.api.APIService
-import me.vistark.coppa._core.utils.CorrectURL.correctPath
+import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.application.RuntimeStorage
-import me.vistark.coppa.domain.entity.SeaPort
 import me.vistark.coppa.domain.entity.TripSync.Companion.createTripSync
 import me.vistark.coppa.domain.entity.TripSync.Companion.endTripSync
 import me.vistark.coppa.services.BackgroundService
 import me.vistark.coppa.ui.category.CategoryActivity
+import me.vistark.coppa.ui.profile_update.ProfileUpdateActivity
 import me.vistark.coppa.ui.seaport.SeaPortActivity.Companion.StartPickSeaPort
 import me.vistark.coppa.ui.seaport.SeaPortActivity.Companion.onPickSeaPortResultProcessing
 import me.vistark.coppa.ui.species_sync_review.SpeciesSyncReviewActivity
@@ -66,6 +66,8 @@ class HomeActivity : FastdroidActivity(
         var PUBLIC_CURRENT_COORDINATES: LatLng? = null
     }
 
+    private val UPDATE_PROFILE_REQUEST_CODE = 11221
+
     private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +87,7 @@ class HomeActivity : FastdroidActivity(
         initControlPanelViews()
 
         // Lấy profile của người dùng nếu có mạng
-        getUserProfileProcessing()
+        syncUserProfileProcessing()
 
         // Lấy các thông tin bị thiếu nếu chưa có
         startMissedDataAfterLoggedIn()
@@ -113,24 +115,10 @@ class HomeActivity : FastdroidActivity(
         // Tạm khóa nút thêm loài do vị trí không khả dụng
         lccitBtnAddSpecies.isEnabled = false
 
-//        Timer().schedule(object : TimerTask() {
-//            override fun run() {
-//                if (isInternetAvailable()) {
-//                    if (ahLnLoadingSmallDialog.visibility != View.GONE)
-//                        runOnUiThread { ahLnLoadingSmallDialog.scaleDownCenter() }
-//                } else {
-//                    if (ahLnLoadingSmallDialog.visibility != View.VISIBLE)
-//                        runOnUiThread {
-//                            aloTvLoadingMessage.text = "Mất mạng"
-//                            ahLnLoadingSmallDialog.scaleUpCenter()
-//                        }
-//                }
-//            }
-//        }, 500, 500)
     }
 
 
-    private fun getUserProfileProcessing() {
+    private fun syncUserProfileProcessing() {
         // Load user nếu đã có
         loadCurrentUserInfo()
 
@@ -152,12 +140,14 @@ class HomeActivity : FastdroidActivity(
                     }
                 } else {
                     if (res.message.isNotEmpty()) {
-                        Toasty.error(
-                            this@HomeActivity.applicationContext,
-                            res.message.first(),
-                            Toasty.LENGTH_SHORT,
-                            true
-                        ).show()
+                        runOnUiThread {
+                            Toasty.error(
+                                this@HomeActivity.applicationContext,
+                                res.message.first(),
+                                Toasty.LENGTH_SHORT,
+                                true
+                            ).show()
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -165,7 +155,7 @@ class HomeActivity : FastdroidActivity(
                 runOnUiThread {
                     Toasty.error(
                         this@HomeActivity.applicationContext,
-                        L("UnexptectedError"),
+                        L(getString(R.string.UnxptectedError)),
                         Toasty.LENGTH_SHORT,
                         true
                     ).show()
@@ -185,7 +175,7 @@ class HomeActivity : FastdroidActivity(
                 L("HiCaptain%s!"),
                 RuntimeStorage.CurrentCaptainProfile.captain.split(" ").lastOrNull() ?: ""
             )
-        lhhcIvUserAvatar.load(RuntimeStorage.CurrentCaptainProfile.image.correctPath(), true)
+        lhhcIvUserAvatar.load(RuntimeStorage.CurrentCaptainProfile.image.coppaCorrectResourcePath(), true)
     }
 
     private fun initViewEventsAndAnimations() {
@@ -214,7 +204,10 @@ class HomeActivity : FastdroidActivity(
 
         // Khi nhấn vào ảnh đại diện của người dùng
         lhhcIvUserAvatar.onTap {
-
+            // Khởi động màn hình cập nhật hồ sơ
+            val intent = Intent(this, ProfileUpdateActivity::class.java)
+            startActivityForResult(intent, UPDATE_PROFILE_REQUEST_CODE)
+            overridePendingTransition(-1, -1)
         }
 
         // Khi nhán vào nút thêm loài bắt được vào chuyến
@@ -334,6 +327,10 @@ class HomeActivity : FastdroidActivity(
                 showOutTrip()
             }
         }
+
+        if (requestCode == UPDATE_PROFILE_REQUEST_CODE && resultCode == RESULT_OK) {
+            syncUserProfileProcessing()
+        }
     }
 
     private fun showOutTrip() {
@@ -375,4 +372,5 @@ class HomeActivity : FastdroidActivity(
             }
         }
     }
+
 }

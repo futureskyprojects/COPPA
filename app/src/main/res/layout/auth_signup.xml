@@ -17,14 +17,14 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username" />
+            android:text="@string/username" />
 
         <EditText
             android:id="@+id/asUsername"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="@string/username"
             android:inputType="text"
             android:lines="1"
             android:maxLength="64" />
@@ -33,14 +33,14 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email" />
+            android:text="@string/email" />
 
         <EditText
             android:id="@+id/aaEmail"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:lines="1" />
 
@@ -49,14 +49,14 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Phone" />
+            android:text="@string/phone" />
 
         <EditText
             android:id="@+id/aaPhone"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone"
+            android:hint="@string/phone"
             android:inputType="phone"
             android:lines="1" />
 
@@ -64,7 +64,7 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ShipOwner" />
+            android:text="@string/shipowner" />
 
         <EditText
             android:id="@+id/aaShipOwner"
@@ -74,7 +74,7 @@
             android:layout_marginEnd="@dimen/space_sm"
             android:layout_marginRight="@dimen/space_sm"
             android:layout_weight="1"
-            android:hint="ShipOwner"
+            android:hint="@string/shipowner"
             android:inputType="textPersonName|textAutoComplete|textCapWords"
             android:lines="1" />
 
@@ -82,7 +82,7 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Captain" />
+            android:text="@string/captain" />
 
         <EditText
             android:id="@+id/aaCaptain"
@@ -92,7 +92,7 @@
             android:layout_marginEnd="@dimen/space_sm"
             android:layout_marginRight="@dimen/space_sm"
             android:layout_weight="1"
-            android:hint="Captain"
+            android:hint="@string/captain"
             android:inputType="textPersonName|textAutoComplete|textCapWords"
             android:lines="1" />
 
@@ -100,14 +100,14 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FishingLicense" />
+            android:text="@string/fishinglicense" />
 
         <EditText
             android:id="@+id/aaFishLicense"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="FishingLicense"
+            android:hint="@string/fishinglicense"
             android:inputType="textCapCharacters"
             android:lines="1"
             android:textAllCaps="true" />
@@ -116,14 +116,14 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="VesselRegistration" />
+            android:text="@string/vesselregistration" />
 
         <EditText
             android:id="@+id/aaVesselRegistration"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="VesselRegistration"
+            android:hint="@string/vesselregistration"
             android:inputType="textCapCharacters"
             android:lines="1"
             android:textAllCaps="true" />
@@ -132,21 +132,21 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Duration" />
+            android:text="@string/duration" />
 
         <TextView
             android:id="@+id/aaDuration"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Duration" />
+            android:hint="@string/duration" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="YourDefaultPasswordWas123456"
+            android:text="@string/yourdefaultpasswordwas123456"
             android:textColor="@color/fastDroidDangerColor"
             android:textStyle="bold|italic" />
 
@@ -156,7 +156,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Register" />
+            android:text="@string/register" />
 
         <include layout="@layout/control_line_or" />
 
@@ -166,6 +166,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Login" />
+            android:text="@string/login" />
     </LinearLayout>
 </ScrollView>

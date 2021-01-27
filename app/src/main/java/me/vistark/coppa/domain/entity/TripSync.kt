@@ -26,6 +26,14 @@ data class TripSync(
     @SerializedName("hauls")
     var hauls: ArrayList<SpeciesSync> = ArrayList()
 ) {
+    fun getDesTime(): String {
+        return destinationTime
+            .replace("/", "-")
+            .replace(":", "")
+            .replace(" ", "_")
+            .replace("-", "")
+    }
+
     companion object {
         fun createTripSync(seaPortId: Int) {
             val tripSync = TripSync(

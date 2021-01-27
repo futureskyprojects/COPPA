@@ -4,7 +4,7 @@ package me.vistark.coppa.application.api.signup.request
 import com.google.gson.annotations.SerializedName
 
 data class RegisterRequestDTO(
-    @SerializedName("capatin")
+    @SerializedName("captain")
     var captain: String = "",
     @SerializedName("culture_name")
     var cultureName: String = "",

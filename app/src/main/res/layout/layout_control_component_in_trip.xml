@@ -34,7 +34,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:lines="1"
-                    android:text="Thêm Loài"
+                    android:text="@string/addspecies"
                     android:textSize="12sp" />
 
                 <Button
@@ -45,7 +45,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:lines="1"
-                    android:text="Xem lại"
+                    android:text="@string/reviewagain"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:text="Kết thúc chuyến đi" />
+                android:text="@string/finishtrip" />
         </LinearLayout>
 
         <Button
@@ -66,7 +66,7 @@
             android:layout_height="match_parent"
             android:layout_margin="4dp"
             android:layout_weight="1"
-            android:text="Lịch sử chuyến đi" />
+            android:text="@string/tripedhistory" />
 
     </LinearLayout>
 </LinearLayout>
