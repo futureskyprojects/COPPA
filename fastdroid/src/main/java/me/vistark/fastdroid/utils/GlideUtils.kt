@@ -2,6 +2,7 @@ package me.vistark.fastdroid.utils
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import me.vistark.fastdroid.R
@@ -12,6 +13,7 @@ import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.saveBitmap
 import java.io.File
 import java.lang.Exception
 import java.util.*
+import java.util.concurrent.ExecutionException
 
 
 object GlideUtils {
@@ -31,9 +33,11 @@ object GlideUtils {
     fun ImageView.path(filePath: String, holderResId: Int = R.drawable.fastdroid_holder) {
         val f = File(filePath)
         if (f.exists()) {
+            Log.w("ImageView[Path]", "[$filePath] is exists!")
             val myBitmap = BitmapFactory.decodeFile(f.absolutePath)
             setImageBitmap(myBitmap)
         } else {
+            Log.e("ImageView[Path]", "[$filePath] is not exists!")
             setImageResource(holderResId)
         }
     }
@@ -44,6 +48,7 @@ object GlideUtils {
         else {
             val genKey = url.md5() + "." + url.length
             val snapshotPath: String = AppStorageManager.get(genKey) ?: ""
+            var isSaved: Boolean = false
             path(snapshotPath)
             if (isInternetAvailable()) {
                 Thread {
@@ -56,15 +61,20 @@ object GlideUtils {
                             try {
                                 File(snapshotPath).delete()
                             } catch (z: Exception) {
-
+                                z.printStackTrace()
                             }
+                            isSaved = true
                         }
+                        AppStorageManager.update(genKey, path)
+
                         post {
-                            AppStorageManager.update(genKey, path)
                             path(path)
                         }
+                    } catch (ex: ExecutionException) {
+
                     } catch (e: Exception) {
-                        post { setImageResource(R.drawable.fastdroid_holder) }
+                        if (snapshotPath.isEmpty() && !isSaved)
+                            post { setImageResource(R.drawable.fastdroid_holder) }
                         e.printStackTrace()
                     }
                 }.start()
@@ -77,12 +87,11 @@ object GlideUtils {
         maxSize: Int = 1024,
         filename: String = UUID.randomUUID().toString() + ".jpg"
     ): String {
+        Log.w("[GLIDE]", "Save from [$url]")
         return saveBitmap(
             Glide.with(this)
                 .asBitmap()
-                .load(url) // sample image
-                .placeholder(R.drawable.fastdroid_holder) // need placeholder to avoid issue like glide annotations
-                .error(android.R.drawable.stat_notify_error) // need error to avoid issue like glide annotations
+                .load(url)
                 .submit()
                 .get(), maxSize, filename
         )

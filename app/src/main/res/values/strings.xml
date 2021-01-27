@@ -80,4 +80,6 @@
     <string name="controlpanel">ControlPanel</string>
     <string name="YouMustConfirmPassword">YouMustConfirmPassword</string>
     <string name="ConfirmPasswordNotCorrect">ConfirmPasswordNotCorrect</string>
+    <string name="YoutMustConnectToInternetForChangeLanguage">YoutMustConnectToInternetForChangeLanguage</string>
+    <string name="SystemIsGettingYourLocation">SystemIsGettingYourLocation</string>
 </resources>

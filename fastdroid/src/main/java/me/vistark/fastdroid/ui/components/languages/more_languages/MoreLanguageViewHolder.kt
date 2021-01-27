@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import me.vistark.fastdroid.R
 import me.vistark.fastdroid.utils.GlideUtils.load
 
-class MoreLanguageViewHolder(v: View, val isCache: Boolean = false) : RecyclerView.ViewHolder(v) {
+class MoreLanguageViewHolder(v: View, private val isCache: Boolean = false) :
+    RecyclerView.ViewHolder(v) {
     val flagIcon: ImageView = v.findViewById(R.id.flagIcon)
 
     fun bind(image: String) {

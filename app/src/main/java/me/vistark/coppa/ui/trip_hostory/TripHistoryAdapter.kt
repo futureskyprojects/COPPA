@@ -12,7 +12,7 @@ import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.TripLog
 import me.vistark.fastdroid.interfaces.IClickable
 import me.vistark.fastdroid.utils.ViewExtension.onTap
-import retrofit2.await
+import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 
 class TripHistoryAdapter : RecyclerView.Adapter<TripHistoryViewHolder>(),
     IClickable<TripLog> {
@@ -29,7 +29,7 @@ class TripHistoryAdapter : RecyclerView.Adapter<TripHistoryViewHolder>(),
             try {
                 // Lấy danh sách lịch sử chuyến đi biển
                 val tripLogs = APIService().APIs.getTripHistories().await()
-                tripLogs.result?.apply {
+                tripLogs!!.result?.apply {
                     RuntimeStorage.TripLogs = this.toTypedArray()
                     runtimes.clear()
                     runtimes.addAll(this.toTypedArray())

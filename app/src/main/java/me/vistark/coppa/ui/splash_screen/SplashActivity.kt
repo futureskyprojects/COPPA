@@ -1,28 +1,24 @@
 package me.vistark.coppa.ui.splash_screen
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import com.google.gson.Gson
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_splash.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import me.vistark.coppa.R
-import me.vistark.coppa._core.api.APIService
 import me.vistark.coppa.application.DefaultValue
 import me.vistark.coppa.application.RuntimeStorage
+import me.vistark.coppa.application.RuntimeStorage.SavedCulture
+import me.vistark.coppa.application.RuntimeStorage.init
+import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguage
 import me.vistark.coppa.ui.auth.AuthActivity
 import me.vistark.coppa.ui.home.HomeActivity
 import me.vistark.fastdroid.core.api.JwtAuth.isAuthenticated
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
-import me.vistark.fastdroid.utils.PermissionUtils.requestAllPermissions
 import me.vistark.fastdroid.utils.GlideUtils.load
 import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
+import me.vistark.fastdroid.utils.PermissionUtils.requestAllPermissions
 import me.vistark.fastdroid.utils.TimerUtils.startAfter
-import retrofit2.await
-import java.lang.Exception
 import kotlin.math.max
 
 class SplashActivity : FastdroidActivity(
@@ -63,39 +59,20 @@ class SplashActivity : FastdroidActivity(
             return
         }
 
-        // Nếu không tiến hành cập nhật các dữ liệu từ server
-        GlobalScope.launch {
-            try {
-                val apis = APIService().APIs
-                // Lấy danh sách các nhóm loài
-                val speciesCategory = apis.getSpeciesCategories().await()
-                speciesCategory.result?.apply {
-                    RuntimeStorage.SpeciesCategories = this.toTypedArray()
-                }
+        // Nếu chưa đăng nhập, thì tiến hành lấy ngôn ngữ theo kiểu mặc định
+        if (!isAuthenticated()) {
+            syncLanguage(cultureName = SavedCulture)
+        } else {
+            syncLanguage(cultureName = RuntimeStorage.CurrentCaptainProfile.cultureName)
+        }
 
-                // Lấy danh sách các loài
-                val specieses = apis.getSpecieses().await()
-                specieses.result?.apply {
-                    RuntimeStorage.Specieses = this.toTypedArray()
-                }
+        // Nếu đã đăng nhập, tiến hành sync data từ server
+        if (isAuthenticated()) {
+            init()
+        }
 
-                // Lấy danh sách các cảng biển
-                val seaPorts = apis.getSeaPorts().await()
-                seaPorts.result?.apply {
-                    RuntimeStorage.SeaPorts = this.toTypedArray()
-                }
-
-                // Lấy danh sách lịch sử chuyến đi biển
-                val tripLogs = apis.getTripHistories().await()
-                tripLogs.result?.apply {
-                    RuntimeStorage.TripLogs = this.toTypedArray()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            runOnUiThread {
-                startNext()
-            }
+        runOnUiThread {
+            startNext()
         }
     }
 

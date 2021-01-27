@@ -29,6 +29,12 @@
             android:layout_gravity="center"
             android:src="@drawable/coppa_brazil" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/moreLanguages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
         <TextView
             android:id="@+id/aaTvAlertDanger"
             style="@style/Fastdroid.TextView.Alert.Danger"

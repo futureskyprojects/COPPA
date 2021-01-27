@@ -6,9 +6,11 @@ import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
 import me.vistark.coppa.application.api.signin.response.LoginSuccessResponse
 import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
 import me.vistark.coppa.application.api.signup.response.success.SignupSuccessResponse
+import me.vistark.coppa.application.api.trans.request.CoppaTranslateRequest
 import me.vistark.coppa.application.api.trip_sync.request.TripSyncDTO
 import me.vistark.coppa.application.api.upload_image.UploadSuccessReponse
 import me.vistark.coppa.domain.entity.*
+import me.vistark.coppa.domain.entity.languages.CoppaTrans
 import me.vistark.fastdroid.core.api.interfaces.IFastdroidAPI
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -38,6 +40,15 @@ interface IAPIService : IFastdroidAPI {
 
     @GET("old-trip")
     fun getOldTrip(): Call<ResponseWrapper<ArrayList<OldTrip>>>
+
+    @GET("countries")
+    fun getCountries(): Call<ResponseWrapper<ArrayList<Country>>>
+
+    @POST("langues")
+    fun getDefaultLanguages(): Call<ResponseWrapper<CoppaTrans>>
+
+    @POST("langues")
+    fun getLanguages(@Body dto: CoppaTranslateRequest): Call<ResponseWrapper<CoppaTrans>>
 
     @GET("histories")
     fun getTripHistories(): Call<ResponseWrapper<ArrayList<TripLog>>>

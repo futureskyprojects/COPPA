@@ -335,4 +335,13 @@ abstract class FastdroidActivity(
             e.printStackTrace()
         }
     }
+
+    fun reload() {
+        startActivity(intent)
+        overridePendingTransition(-1, -1)
+
+        finish()
+        overridePendingTransition(-1, -1)
+
+    }
 }

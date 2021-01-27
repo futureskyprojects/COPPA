@@ -1,4 +1,11 @@
 package me.vistark.fastdroid.core.models
 
-class FastdroiBaseMap(var key: String, var value: String) {
+import com.google.gson.annotations.SerializedName
+
+class FastdroiBaseMap(
+    @SerializedName("key")
+    var key: String = "",
+    @SerializedName("value")
+    var value: String = ""
+) {
 }

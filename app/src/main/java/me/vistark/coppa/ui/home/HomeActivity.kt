@@ -51,7 +51,7 @@ import me.vistark.fastdroid.utils.PermissionUtils.isPermissionGranted
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.setMargin
 import me.vistark.fastdroid.utils.locations.LocationUtils.LatLngToDMS
-import retrofit2.await
+import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import java.util.*
 import kotlin.math.max
 
@@ -109,7 +109,7 @@ class HomeActivity : FastdroidActivity(
 
     private fun initLoadingMapDialog() {
         ahLnLoadingSmallDialog.scaleUpCenter(200)
-        aloTvLoadingMessage.text = L("SystemIsGettingYourLocation")
+        aloTvLoadingMessage.text = L(getString(R.string.SystemIsGettingYourLocation))
         aloIvLoadingOverlayIcon.load(me.vistark.fastdroid.R.raw.loading_pink)
 
         // Tạm khóa nút thêm loài do vị trí không khả dụng
@@ -130,7 +130,7 @@ class HomeActivity : FastdroidActivity(
         GlobalScope.launch {
             try {
                 val res = APIService().APIs.getCaptainProfile().await()
-                if (res.status == 200 && res.result != null) {
+                if (res!!.status == 200 && res.result != null) {
                     // Thông báo thành công
                     runOnUiThread {
                         res.result?.apply {
@@ -175,7 +175,10 @@ class HomeActivity : FastdroidActivity(
                 L("HiCaptain%s!"),
                 RuntimeStorage.CurrentCaptainProfile.captain.split(" ").lastOrNull() ?: ""
             )
-        lhhcIvUserAvatar.load(RuntimeStorage.CurrentCaptainProfile.image.coppaCorrectResourcePath(), true)
+        lhhcIvUserAvatar.load(
+            RuntimeStorage.CurrentCaptainProfile.image.coppaCorrectResourcePath(),
+            true
+        )
     }
 
     private fun initViewEventsAndAnimations() {
@@ -353,14 +356,14 @@ class HomeActivity : FastdroidActivity(
                 // Lấy danh sách các cảng biển nếu chưa có
                 if (RuntimeStorage.SeaPorts.isEmpty()) {
                     val seaPorts = apis.getSeaPorts().await()
-                    seaPorts.result?.apply {
+                    seaPorts!!.result?.apply {
                         RuntimeStorage.SeaPorts = this.toTypedArray()
                     }
                 }
 
                 // Lấy danh sách lịch sử chuyến đi biển
                 val tripLogs = apis.getTripHistories().await()
-                tripLogs.result?.apply {
+                tripLogs!!.result?.apply {
                     RuntimeStorage.TripLogs = this.toTypedArray()
                 }
             } catch (e: java.lang.Exception) {

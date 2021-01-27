@@ -15,6 +15,7 @@ import me.vistark.coppa._core.api.APIService
 import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.application.api.captain_profile.request.UpdateCaptainProfileRequestDTO
+import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguage
 import me.vistark.coppa.ui.auth.AuthActivity
 import me.vistark.fastdroid.core.api.JwtAuth.clearAuthentication
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
@@ -42,7 +43,7 @@ import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.deleteOnExists
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.await
+import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import java.io.File
 import java.util.*
 
@@ -83,9 +84,27 @@ class ProfileUpdateActivity : FastdroidActivity(
     }
 
     private fun initForMoreLanguageOptions() {
-//        moreLanguages.bindMoreLanguage() {
-//
-//        }
+        moreLanguages.bindMoreLanguage(
+            RuntimeStorage.Countries.map { it.flagIcon.coppaCorrectResourcePath() }
+                .toTypedArray(),
+            RuntimeStorage.Translates.localization.currentCulture.flagIcon.coppaCorrectResourcePath(),
+            true
+        ) { selected ->
+            if (!isInternetAvailable()) {
+                Toasty.warning(
+                    this,
+                    L(getString(R.string.YoutMustConnectToInternetForChangeLanguage)),
+                    Toasty.LENGTH_SHORT,
+                    true
+                ).show()
+            } else {
+                syncLanguage(
+                    cultureName = RuntimeStorage.Countries.firstOrNull { it.flagIcon.coppaCorrectResourcePath() == selected }?.cultureName
+                        ?: "",
+                    isReload = true
+                )
+            }
+        }
     }
 
     private fun initSwitchContainer() {
@@ -309,7 +328,7 @@ class ProfileUpdateActivity : FastdroidActivity(
                             // Tải lên máy chủ
                             try {
                                 val res = APIService().APIs.postUploadImage(body).await()
-                                if (res.status == 200 && res.result?.path?.isNotEmpty() == true) {
+                                if (res!!.status == 200 && res.result?.path?.isNotEmpty() == true) {
                                     dto.image = res.result!!.path
                                 }
                             } catch (e: Exception) {
@@ -321,7 +340,7 @@ class ProfileUpdateActivity : FastdroidActivity(
                         try {
                             val successBody =
                                 APIService().APIs.postUpdateCaptainProfile(dto).await()
-                            if (successBody.status == 200) {
+                            if (successBody!!.status == 200) {
                                 runOnUiThread {
                                     setResult(RESULT_OK)
                                     Toasty.success(

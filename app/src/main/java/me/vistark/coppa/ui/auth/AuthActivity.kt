@@ -1,8 +1,6 @@
 package me.vistark.coppa.ui.auth
 
-import android.content.Intent
 import android.os.Bundle
-import com.google.gson.Gson
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.auth_signin.*
@@ -10,15 +8,19 @@ import kotlinx.android.synthetic.main.auth_signup.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vistark.coppa.R
-import me.vistark.coppa.application.DefaultValue
-import me.vistark.coppa.application.RuntimeStorage.CurrentUsername
-import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
-import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
 import me.vistark.coppa._core.api.APIService
+import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
+import me.vistark.coppa.application.DefaultValue
 import me.vistark.coppa.application.RuntimeStorage
+import me.vistark.coppa.application.RuntimeStorage.CurrentUsername
+import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
+import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
+import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguage
 import me.vistark.coppa.ui.home.HomeActivity
+import me.vistark.coppa.ui.splash_screen.SplashActivity
 import me.vistark.fastdroid.core.api.JwtAuth.updateJwtAuth
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
+import me.vistark.fastdroid.ui.components.languages.more_languages.MoreLangueExtensionForRecyclerView.bindMoreLanguage
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomRight
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownTopLeft
@@ -29,16 +31,13 @@ import me.vistark.fastdroid.utils.EdittextUtils.required
 import me.vistark.fastdroid.utils.EdittextUtils.validate
 import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
-import me.vistark.fastdroid.utils.TimerUtils.startAfter
+import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
 import me.vistark.fastdroid.utils.ViewExtension.hide
 import me.vistark.fastdroid.utils.ViewExtension.moveToTop
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
 import me.vistark.fastdroid.utils.ViewExtension.show
-import retrofit2.HttpException
-import retrofit2.await
-import java.lang.Exception
 
 
 class AuthActivity : FastdroidActivity(
@@ -63,11 +62,36 @@ class AuthActivity : FastdroidActivity(
 
         bindDtoForLogin()
 
+        initMoreLanguages()
+
+    }
+
+    private fun initMoreLanguages() {
+        moreLanguages.bindMoreLanguage(RuntimeStorage.Countries.map { it.flagIcon.coppaCorrectResourcePath() }
+            .toTypedArray(),
+            RuntimeStorage.Translates.localization.currentCulture.flagIcon.coppaCorrectResourcePath(),
+            true
+        ) { selected ->
+            if (!isInternetAvailable()) {
+                Toasty.warning(
+                    this,
+                    L(getString(R.string.YoutMustConnectToInternetForChangeLanguage)),
+                    Toasty.LENGTH_SHORT,
+                    true
+                ).show()
+            } else {
+                syncLanguage(
+                    cultureName = RuntimeStorage.Countries.firstOrNull { it.flagIcon.coppaCorrectResourcePath() == selected }?.cultureName
+                        ?: "",
+                    isReload = true
+                )
+            }
+        }
     }
 
     private fun initDefaultData() {
         asiUsername.setText(CurrentUsername)
-//        loginRequestDTO.username
+        loginRequestDTO.username = CurrentUsername
     }
 
     //region Quản lý hiệu ứng chuyển đổi
@@ -226,7 +250,7 @@ class AuthActivity : FastdroidActivity(
                 GlobalScope.launch {
                     try {
                         val successBody = APIService().APIs.postRegister(registerRequestDTO).await()
-                        if (successBody.status == 200 && successBody.result != null) {
+                        if (successBody?.status == 200 && successBody.result != null) {
                             // Cập nhật thông tin xác thực
                             updateJwtAuth(
                                 successBody.result!!.token.original.accessToken,
@@ -244,9 +268,9 @@ class AuthActivity : FastdroidActivity(
                                     ).show()
                                 }
                             }
-                            startHome()
+                            startFoSync()
                         } else {
-                            if (successBody.message.isNotEmpty()) {
+                            if (successBody!!.message.isNotEmpty()) {
                                 aaTvAlertDanger.post {
                                     aaTvAlertDanger.text = successBody.message.first()
                                     aaTvAlertDanger.show()
@@ -275,7 +299,7 @@ class AuthActivity : FastdroidActivity(
         GlobalScope.launch {
             try {
                 val res = APIService().APIs.postLogin(loginRequestDTO).await()
-                if (res.status == 200 && res.result != null) {
+                if (res?.status == 200 && res.result != null) {
                     // Cập nhật thông tin xác thực
                     updateJwtAuth(
                         res.result!!.original.accessToken,
@@ -293,9 +317,9 @@ class AuthActivity : FastdroidActivity(
                             ).show()
                         }
                     }
-                    startHome()
+                    startFoSync()
                 } else {
-                    if (res.message.isNotEmpty()) {
+                    if (res!!.message.isNotEmpty()) {
                         aaTvAlertDanger.post {
                             aaTvAlertDanger.text = res.message.first()
                             aaTvAlertDanger.show()
@@ -316,7 +340,7 @@ class AuthActivity : FastdroidActivity(
         }
     }
 
-    private fun startHome() {
-        startSingleActivity(HomeActivity::class.java)
+    private fun startFoSync() {
+        startSingleActivity(SplashActivity::class.java)
     }
 }

@@ -7,6 +7,8 @@ import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
@@ -29,7 +31,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.HttpException
-import retrofit2.await
+import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import java.io.File
 import java.sql.Time
 import java.util.*
@@ -52,6 +54,8 @@ class BackgroundService : FastdroidService(
 
     var mLocationManager: LocationManager? = null
 
+    var lastedDetectCoordinate: Long = 0
+
     var timer: Timer? = null
 
     companion object {
@@ -60,32 +64,56 @@ class BackgroundService : FastdroidService(
     }
 
     @SuppressLint("MissingPermission")
-    override fun tasks() {
+    fun syncLocation() {
+        if (mLocationManager != null) {
+            mLocationManager?.removeUpdates(this)
+        }
         mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        // Lấy vị trí được hệ thống thu thập lần cuối cùng
+        val criteria = Criteria()
+        val provider = mLocationManager?.getBestProvider(criteria, false)
+        val location: Location? = provider?.let { mLocationManager?.getLastKnownLocation(it) }
+        if (location != null) {
+            onLocationChanged(location)
+            Log.e(
+                "[SERVICE]location",
+                "Latest know: [${location.latitude}, ${location.longitude}]"
+            )
+        } else {
+            Log.e("[SERVICE]location", "Not available")
+        }
+        mLocationManager?.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+            LOCATION_REFRESH_DISTANCE, this
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun tasks() {
         if (isPermissionGranted(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         ) {
-            // Lấy vị trí được hệ thống thu thập lần cuối cùng
-            val criteria = Criteria()
-            val provider = mLocationManager?.getBestProvider(criteria, false)
-            val location: Location? = provider?.let { mLocationManager?.getLastKnownLocation(it) }
-            if (location != null) {
-                onLocationChanged(location)
-            } else {
-                println("Location not avilable")
-            }
-            mLocationManager?.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, this
-            )
+            syncLocation()
         }
 
         internetTimerChecker()
+
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                if (System.currentTimeMillis() - lastedDetectCoordinate > 30000) {
+                    Handler(Looper.getMainLooper()).post {
+                        syncLocation()
+                    }
+                }
+            }
+
+        }, 1000, 1000)
     }
 
     override fun onLocationChanged(location: Location) {
+        lastedDetectCoordinate = System.currentTimeMillis()
         val coordinate = FastdroidCoordinate(location.latitude, location.longitude)
         val coordinateInString = Gson().toJson(coordinate)
         sendSignal(REALTIME_COORDINATES, coordinateInString)
@@ -124,47 +152,46 @@ class BackgroundService : FastdroidService(
             )
         )
 
-        val apis = APIService().APIs
-        // Upload từng tệp ảnh lên server
-        for (i in 0 until tripSyncClone.hauls.size) {
-            // Tách ra danh sách các file ảnh
-            val images = tripSyncClone.hauls[i].images.split(",")
-            // Tạo bộ nhớ chứa
-            val uploadedImages = ArrayList<String>()
-            // Upload từng file ảnh lên
-            images.forEach {
-                // Tạo file body
-                val file = File(it)
-                val requestFile: RequestBody =
-                    RequestBody.create(MediaType.parse("multipart/form-data"), file)
-                val body =
-                    MultipartBody.Part.createFormData("image", file.name, requestFile)
+        GlobalScope.launch {
+            val apis = APIService().APIs
+            // Upload từng tệp ảnh lên server
+            for (i in 0 until tripSyncClone.hauls.size) {
+                // Tách ra danh sách các file ảnh
+                val images = tripSyncClone.hauls[i].images.split(",")
+                // Tạo bộ nhớ chứa
+                val uploadedImages = ArrayList<String>()
+                // Upload từng file ảnh lên
+                images.forEach {
+                    // Tạo file body
+                    val file = File(it)
+                    val requestFile: RequestBody =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), file)
+                    val body =
+                        MultipartBody.Part.createFormData("image", file.name, requestFile)
 
-                GlobalScope.launch {
                     // Tải lên máy chủ
                     try {
                         val res = apis.postUploadImage(body).await()
-                        if (res.status == 200 && res.result?.path?.isNotEmpty() == true) {
+                        if (res!!.status == 200 && res.result?.path?.isNotEmpty() == true) {
                             uploadedImages.add(res.result!!.path)
                             Log.w("UPLOADED_IMAGES", res.result!!.path)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
+
                 }
+
+                // Cập nhật danh sách ảnh vừa tải vào lại cho mẻ loài
+                tripSyncClone.hauls[i].images = uploadedImages.joinToString(",")
             }
+            // Cập nhật thời điểm gửi
+            tripSyncClone.updateSubmitTime()
 
-            // Cập nhật danh sách ảnh vừa tải vào lại cho mẻ loài
-            tripSyncClone.hauls[i].images = uploadedImages.joinToString(",")
-        }
-        // Cập nhật thời điểm gửi
-        tripSyncClone.updateSubmitTime()
-
-        GlobalScope.launch {
             // Gửi lên server
             try {
                 val res = apis.postSync(TripSyncDTO(tripSync)).await()
-                if (res.status == 200) {
+                if (res!!.status == 200) {
                     // Xóa hết cá tệp tin trong này
                     tripSync.hauls.forEach { h ->
                         h.images.split(",").forEach { img ->

@@ -4,12 +4,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import me.vistark.fastdroid.core.models.FastdroiBaseMap
+import me.vistark.fastdroid.utils.storage.AppStorageManager
 
 object MultipleLanguage {
+    var Translates: Array<FastdroiBaseMap>
+        get() = AppStorageManager.get("APP_DINAMIC_TRANSLATE") ?: emptyArray()
+        set(value) {
+            AppStorageManager.update("APP_DINAMIC_TRANSLATE", value)
+        }
+
     fun L(key: String): String {
         if (key.isEmpty())
             return ""
-        return "[$key]"
+        return Translates.firstOrNull { it.key == key }?.value ?: "[$key]"
     }
 
     fun View.autoTranslate() {
