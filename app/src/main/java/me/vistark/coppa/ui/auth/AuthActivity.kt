@@ -162,6 +162,10 @@ class AuthActivity : FastdroidActivity(
     }
 
     private fun bindDtoForRegister() {
+        defaultPasswordShow.text = String.format(
+            getString(R.string.yourdefaultpasswordwas____),
+            DefaultValue.DefaultPassword
+        )
         asUsername.onTextChanged {
             aaTvAlertDanger.hide()
             registerRequestDTO.username = it
@@ -243,7 +247,7 @@ class AuthActivity : FastdroidActivity(
             } else {
                 // Ghi tạm dữ liệu
                 registerRequestDTO.image = ""
-                registerRequestDTO.cultureName = "vi"
+                registerRequestDTO.cultureName = RuntimeStorage.SavedCulture
                 registerRequestDTO.password = DefaultValue.DefaultPassword
 
                 val loading = showLoadingBase()

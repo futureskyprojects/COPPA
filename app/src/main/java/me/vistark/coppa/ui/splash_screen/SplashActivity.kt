@@ -35,24 +35,24 @@ class SplashActivity : FastdroidActivity(
         aloIvLoadingOverlayIcon.load(R.raw.loading_pink)
         appStartAtMillis = System.currentTimeMillis()
 
-        initRemoteConfig()
-
-        requestAllPermissions(
-            DefaultValue.AppPermissions,
-            L(getString(R.string.RequestPermission)),
-            onCompleted = {
-                startInitDataForApp()
-            }, onDenied = {
-                Toasty.error(
-                    this,
-                    L(getString(R.string.AppRequiredAcceptAllPermissionsToMakeActive)),
-                    Toast.LENGTH_SHORT,
-                    true
-                ).show()
-                startAfter(300) {
-                    finish()
-                }
-            })
+        initRemoteConfig() {
+            requestAllPermissions(
+                DefaultValue.AppPermissions,
+                L(getString(R.string.RequestPermission)),
+                onCompleted = {
+                    startInitDataForApp()
+                }, onDenied = {
+                    Toasty.error(
+                        this,
+                        L(getString(R.string.AppRequiredAcceptAllPermissionsToMakeActive)),
+                        Toast.LENGTH_SHORT,
+                        true
+                    ).show()
+                    startAfter(300) {
+                        finish()
+                    }
+                })
+        }
     }
 
     private fun startInitDataForApp() {

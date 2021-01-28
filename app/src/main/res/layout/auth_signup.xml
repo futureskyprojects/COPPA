@@ -143,10 +143,17 @@
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password" />
+
+        <TextView
+            android:id="@+id/defaultPasswordShow"
+            style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:gravity="center"
-            android:text="@string/yourdefaultpasswordwas123456"
             android:textColor="@color/fastDroidDangerColor"
             android:textStyle="bold|italic" />
 

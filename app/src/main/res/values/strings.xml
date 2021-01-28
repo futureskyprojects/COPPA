@@ -65,7 +65,7 @@
     <string name="fishinglicense">FishingLicense</string>
     <string name="vesselregistration">VesselRegistration</string>
     <string name="duration">Duration</string>
-    <string name="yourdefaultpasswordwas123456">YourDefaultPasswordWas123456</string>
+    <string name="yourdefaultpasswordwas____">YourDefaultPasswordWas%s</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="or">OR</string>
