@@ -161,7 +161,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_sm"
-                android:text="SyncingWhenInternetAvailabe"
+                android:text="@string/syncingwheninternetavailabe"
                 android:textColor="@color/infoColor"
                 android:textSize="12sp"
                 android:textStyle="italic" />

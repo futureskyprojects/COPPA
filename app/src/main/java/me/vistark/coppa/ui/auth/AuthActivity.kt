@@ -173,7 +173,7 @@ class AuthActivity : FastdroidActivity(
             registerRequestDTO.email = it
         }
 
-        aaTvPhone.text = aaTvPhone.text.toString() + " (Ex: +84123456789)"
+        aaTvPhone.text = aaTvPhone.text.toString()
 
         aaPhone.onTextChanged {
             aaTvAlertDanger.hide()
@@ -227,7 +227,7 @@ class AuthActivity : FastdroidActivity(
                 aaEmail.validate("\\S+@\\S+\\.\\S+", L(getString(R.string.EmailIsInvalid))),
                 aaPhone.required(L(getString(R.string.YouMustInputPhone))),
                 aaPhone.validate(
-                    "(\\+\\d{1})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
+                    "(\\+\\d{1,3})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
                     L(getString(R.string.YourPhoneIsInvalid))
                 ),
                 aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),

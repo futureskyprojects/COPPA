@@ -78,9 +78,9 @@ class SeaPortActivity : FastdroidActivity(
             intent.getBooleanExtra(SeaPortActivity::class.java.simpleName, false)
 
         if (isSlectForStartSeaPort) {
-            asTvTitle.text = L("PortOfDeparture")
+            asTvTitle.text = L(getString(R.string.PortOfDeparture))
         } else {
-            asTvTitle.text = L("PortOfReturn")
+            asTvTitle.text = L(getString(R.string.PortOfReturn))
         }
         asTvTitle.isSelected = true
         return true
@@ -116,7 +116,6 @@ class SeaPortActivity : FastdroidActivity(
 
     override fun onBackPressed() {
         rlContainer.scaleDownCenter {
-            startActivity(CategoryActivity::class.java)
             finish()
         }
     }

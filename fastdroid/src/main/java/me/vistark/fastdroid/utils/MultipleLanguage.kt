@@ -17,7 +17,7 @@ object MultipleLanguage {
     fun L(key: String): String {
         if (key.isEmpty())
             return ""
-        return Translates.firstOrNull { it.key == key }?.value ?: "[$key]"
+        return Translates.firstOrNull { it.key.equals(key, ignoreCase = true) }?.value ?: "[$key]"
     }
 
     fun View.autoTranslate() {

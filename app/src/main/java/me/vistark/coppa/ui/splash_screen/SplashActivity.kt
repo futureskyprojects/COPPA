@@ -5,6 +5,7 @@ import android.widget.Toast
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_splash.*
 import me.vistark.coppa.R
+import me.vistark.coppa._core.remote_config.RemoteConfig.initRemoteConfig
 import me.vistark.coppa.application.DefaultValue
 import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.application.RuntimeStorage.SavedCulture
@@ -33,6 +34,8 @@ class SplashActivity : FastdroidActivity(
         super.onCreate(savedInstanceState)
         aloIvLoadingOverlayIcon.load(R.raw.loading_pink)
         appStartAtMillis = System.currentTimeMillis()
+
+        initRemoteConfig()
 
         requestAllPermissions(
             DefaultValue.AppPermissions,

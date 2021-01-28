@@ -172,7 +172,7 @@ class HomeActivity : FastdroidActivity(
     private fun loadCurrentUserInfo() {
         lhhcTvWelcomeText.text =
             String.format(
-                L("HiCaptain%s!"),
+                L(getString(R.string.HiCaptain___)),
                 RuntimeStorage.CurrentCaptainProfile.captain.split(" ").lastOrNull() ?: ""
             )
         lhhcIvUserAvatar.load(

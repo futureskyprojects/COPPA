@@ -239,7 +239,7 @@ class ProfileUpdateActivity : FastdroidActivity(
             dto.email = it
         }
 
-        aaTvPhone.text = aaTvPhone.text.toString() + " (Ex: +84123456789)"
+        aaTvPhone.text = aaTvPhone.text.toString()
 
         aaPhone.setText(dto.phone)
         aaPhone.onTextChanged {
@@ -287,7 +287,7 @@ class ProfileUpdateActivity : FastdroidActivity(
                     ),
                     aaPhone.required(L(getString(R.string.YouMustInputPhone))),
                     aaPhone.validate(
-                        "(\\+\\d{1})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
+                        "(\\+\\d{1,3})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
                         L(getString(R.string.YourPhoneIsInvalid))
                     ),
                     aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),
@@ -383,7 +383,7 @@ class ProfileUpdateActivity : FastdroidActivity(
     }
 
     private fun logout() {
-        val loading = showLoadingBase("LogingOut...")
+        val loading = showLoadingBase(getString(R.string.LogingOut))
         Thread {
             RuntimeStorage.clear()
             clearAuthentication()

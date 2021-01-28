@@ -65,7 +65,6 @@ class SpeciesSyncReviewActivity : FastdroidActivity(
 
     override fun onBackPressed() {
         rlContainer.scaleDownCenter {
-            startActivity(CategoryActivity::class.java)
             finish()
         }
     }

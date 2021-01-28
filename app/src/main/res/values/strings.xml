@@ -82,4 +82,22 @@
     <string name="ConfirmPasswordNotCorrect">ConfirmPasswordNotCorrect</string>
     <string name="YoutMustConnectToInternetForChangeLanguage">YoutMustConnectToInternetForChangeLanguage</string>
     <string name="SystemIsGettingYourLocation">SystemIsGettingYourLocation</string>
+    <string name="PreciseLocation">PreciseLocation</string>
+    <string name="AllowsAnAppToAccessPreciseLocation">AllowsAnAppToAccessPreciseLocation</string>
+    <string name="ApproximateLocation">ApproximateLocation</string>
+    <string name="AllowsAnAppToAccessApproximateLocation">AllowsAnAppToAccessApproximateLocation</string>
+    <string name="Internet">Internet</string>
+    <string name="AllowsApplicationsToOpenNetworkSockets">AllowsApplicationsToOpenNetworkSockets</string>
+    <string name="ReadExternalStorage">ReadExternalStorage</string>
+    <string name="AllowsAnApplicationToReadFromExternalStorage">AllowsAnApplicationToReadFromExternalStorage</string>
+    <string name="Camera">Camera</string>
+    <string name="RequiredToBeAbleToAccessTheCameraDevice">RequiredToBeAbleToAccessTheCameraDevice</string>
+    <string name="AppIsRunningInBackground">AppIsRunningInBackground</string>
+    <string name="HiCaptain___">HiCaptain%s!</string>
+    <string name="LogingOut">LogingOut…</string>
+    <string name="PortOfDeparture">PortOfDeparture</string>
+    <string name="PortOfReturn">PortOfReturn</string>
+    <string name="signout">SignOut</string>
+    <string name="syncingwheninternetavailabe">SyncingWhenInternetAvailabe</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

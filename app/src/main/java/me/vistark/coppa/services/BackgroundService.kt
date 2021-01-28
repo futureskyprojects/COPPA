@@ -39,9 +39,9 @@ import kotlin.collections.ArrayList
 
 
 class BackgroundService : FastdroidService(
-    "COPPA",
+    L("app_name"), // Đã thêm vào res dịch
     R.mipmap.ic_launcher_round,
-    L("AppIsRunningInBackground")
+    L("AppIsRunningInBackground") // Đã dịch
 ), LocationListener {
 
     var isSyncing = false
@@ -55,6 +55,8 @@ class BackgroundService : FastdroidService(
     var mLocationManager: LocationManager? = null
 
     var lastedDetectCoordinate: Long = 0
+
+    var timeForWaitGPSSignal = 10000
 
     var timer: Timer? = null
 
@@ -102,7 +104,7 @@ class BackgroundService : FastdroidService(
 
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                if (System.currentTimeMillis() - lastedDetectCoordinate > 30000) {
+                if (System.currentTimeMillis() - lastedDetectCoordinate > timeForWaitGPSSignal) {
                     Handler(Looper.getMainLooper()).post {
                         syncLocation()
                     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.vistark.coppa">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -26,6 +27,11 @@
         android:supportsRtl="true"
         android:theme="@style/Fastdroid"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".ui.profile_update.ProfileUpdateActivity"
             android:theme="@style/Fastdroid.Transparent" />
@@ -40,10 +46,6 @@
             android:name=".services.BackgroundService"
             android:enabled="true"
             android:exported="true" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".ui.home.HomeActivity"

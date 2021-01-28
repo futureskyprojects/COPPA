@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><!-- START xml_defaults -->
+<defaultsMap>
+    <entry>
+        <key>DefaultPassword</key>
+        <value>123456</value>
+    </entry>
+    <entry>
+        <key>MinImageRequest</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>BaseUrl</key>
+        <value>http://gdst.vn/api/</value>
+    </entry>
+    <entry>
+        <key>BlockedMessage</key>
+        <value />
+    </entry>
+</defaultsMap><!-- END xml_defaults -->
