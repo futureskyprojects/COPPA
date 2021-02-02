@@ -85,7 +85,7 @@ class SpeciesInfoProviderActivity :
 
     private fun initUpdateData() {
         // Tìm cách xóa ảnh trong folder khi bị xóa qua cập nhật
-        currentSpeciesSync.images.split(",").forEach {
+        currentSpeciesSync.images.split(",").filter { it.isNotEmpty() && it.isNotBlank() }.forEach {
             val newUri = it.toUri()
             mapImagesAddress[it] = newUri
             pickedImagesUris.add(newUri)

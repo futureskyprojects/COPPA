@@ -1,10 +1,12 @@
 package me.vistark.coppa.ui.species_sync_review
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import me.vistark.coppa.R
 import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.application.RuntimeStorage
@@ -23,7 +25,7 @@ class SpeciesSyncReviewViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val isciTvSpeciesCategoryName: TextView = v.findViewById(R.id.isciTvSpeciesCategoryName)
 
     fun bind(speciesSync: SpeciesSync) {
-        val images = speciesSync.images.split(",")
+        val images = speciesSync.images.split(",").filter { it.isNotEmpty() && it.isNotBlank() }
         var count = 0
 
         // Nếu số lượng hình ảnh lớn hơn 1 thì tiến hành cho chạy slide

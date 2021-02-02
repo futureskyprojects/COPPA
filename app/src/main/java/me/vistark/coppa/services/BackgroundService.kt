@@ -159,7 +159,7 @@ class BackgroundService : FastdroidService(
             // Upload từng tệp ảnh lên server
             for (i in 0 until tripSync.hauls.size) {
                 // Tách ra danh sách các file ảnh
-                val images = tripSync.hauls[i].images.split(",")
+                val images = tripSync.hauls[i].images.split(",").filter { it.isNotEmpty() && it.isNotBlank() }
                 // Upload từng file ảnh lên
                 images.forEach {
                     if (it.contains(TripSync.SUB_CURRENT_TRIP_FOLDER)) {
@@ -178,7 +178,7 @@ class BackgroundService : FastdroidService(
                             if (res!!.status == 200 && res.result?.path?.isNotEmpty() == true) {
                                 // Cập nhật vào ảnh của chuyến
                                 val _imgs =
-                                    tripSync.hauls[i].images.split(",").filter { p -> p != it }
+                                    tripSync.hauls[i].images.split(",").filter { it.isNotEmpty() && it.isNotBlank() }.filter { p -> p != it }
                                 tripSync.hauls[i].images =
                                     _imgs.plusElement(res.result!!.path).joinToString(",")
 
@@ -202,7 +202,7 @@ class BackgroundService : FastdroidService(
                     if (res!!.status == 200) {
                         // Xóa hết cá tệp tin trong này
                         tripSync.hauls.forEach { h ->
-                            h.images.split(",").forEach { img ->
+                            h.images.split(",").filter { it.isNotEmpty() && it.isNotBlank() }.forEach { img ->
                                 img.deleteOnExists()
                             }
                         }

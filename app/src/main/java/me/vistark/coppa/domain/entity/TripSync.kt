@@ -36,7 +36,7 @@ data class TripSync(
 ) {
     fun isSyncedAllImages(): Boolean {
         for (h in hauls) {
-            val _imgs = h.images.split(",")
+            val _imgs = h.images.split(",").filter { it.isNotEmpty() && it.isNotBlank() }
             if (_imgs.any { it.contains(SUB_CURRENT_TRIP_FOLDER) })
                 return false
         }
