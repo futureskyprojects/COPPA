@@ -19,6 +19,7 @@ import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.application.api.trip_sync.request.TripSyncDTO
 import me.vistark.coppa.domain.entity.TripSync
 import me.vistark.coppa.domain.entity.TripSync.Companion.removeTripSync
+import me.vistark.coppa.domain.entity.TripSync.Companion.updateTripSyncHauls
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver.Companion.sendSignal
 import me.vistark.fastdroid.core.models.FastdroidCoordinate
 import me.vistark.fastdroid.services.FastdroidService
@@ -75,7 +76,15 @@ class BackgroundService : FastdroidService(
         val criteria = Criteria()
         val provider = mLocationManager?.getBestProvider(criteria, false)
         val location: Location? = provider?.let { mLocationManager?.getLastKnownLocation(it) }
-
+        if (location != null) {
+            onLocationChanged(location)
+            Log.e(
+                "[SERVICE]location",
+                "Latest know: [${location.latitude}, ${location.longitude}]"
+            )
+        } else {
+            Log.e("[SERVICE]location", "Not available")
+        }
         mLocationManager?.requestLocationUpdates(
             LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
             LOCATION_REFRESH_DISTANCE, this
@@ -137,7 +146,6 @@ class BackgroundService : FastdroidService(
             internetTimerChecker()
             return
         }
-        val tripSyncClone = tripSync.clone()
 
         updateLoading(
             String.format(
@@ -149,60 +157,71 @@ class BackgroundService : FastdroidService(
         GlobalScope.launch {
             val apis = APIService().APIs
             // Upload từng tệp ảnh lên server
-            for (i in 0 until tripSyncClone.hauls.size) {
+            for (i in 0 until tripSync.hauls.size) {
                 // Tách ra danh sách các file ảnh
-                val images = tripSyncClone.hauls[i].images.split(",")
-                // Tạo bộ nhớ chứa
-                val uploadedImages = ArrayList<String>()
+                val images = tripSync.hauls[i].images.split(",")
                 // Upload từng file ảnh lên
                 images.forEach {
-                    // Tạo file body
-                    val file = File(it)
-                    val requestFile: RequestBody =
-                        RequestBody.create(MediaType.parse("multipart/form-data"), file)
-                    val body =
-                        MultipartBody.Part.createFormData("image", file.name, requestFile)
+                    if (it.contains(TripSync.SUB_CURRENT_TRIP_FOLDER)) {
+                        // Nếu path là local thì tiến hành upload, không thì bỏ qua
+                        Log.w("UPLOAD_IMAGE", "[$it]")
+                        // Tạo file body
+                        val file = File(it)
+                        val requestFile: RequestBody =
+                            RequestBody.create(MediaType.parse("multipart/form-data"), file)
+                        val body =
+                            MultipartBody.Part.createFormData("image", file.name, requestFile)
 
-                    // Tải lên máy chủ
-                    try {
-                        val res = apis.postUploadImage(body).await()
-                        if (res!!.status == 200 && res.result?.path?.isNotEmpty() == true) {
-                            uploadedImages.add(res.result!!.path)
-                            Log.w("UPLOADED_IMAGES", res.result!!.path)
+                        // Tải lên máy chủ
+                        try {
+                            val res = apis.postUploadImage(body).await()
+                            if (res!!.status == 200 && res.result?.path?.isNotEmpty() == true) {
+                                // Cập nhật vào ảnh của chuyến
+                                val _imgs =
+                                    tripSync.hauls[i].images.split(",").filter { p -> p != it }
+                                tripSync.hauls[i].images =
+                                    _imgs.plusElement(res.result!!.path).joinToString(",")
+
+                                updateTripSyncHauls(tripSync.hauls[i])
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
-
                 }
-
-                // Cập nhật danh sách ảnh vừa tải vào lại cho mẻ loài
-                tripSyncClone.hauls[i].images = uploadedImages.joinToString(",")
             }
-            // Cập nhật thời điểm gửi
-            tripSyncClone.updateSubmitTime()
 
-            // Gửi lên server
-            try {
-                val res = apis.postSync(TripSyncDTO(tripSync)).await()
-                if (res!!.status == 200) {
-                    // Xóa hết cá tệp tin trong này
-                    tripSync.hauls.forEach { h ->
-                        h.images.split(",").forEach { img ->
-                            img.deleteOnExists()
+            if (tripSync.isSyncedAllImages()) {
+                // Nếu tất cả các ảnh trong chuyến đã được đồng bộ thì tiến hành gửi thông tin chuyến lên
+                // Cập nhật thời điểm gửi
+                tripSync.updateSubmitTime()
+
+                // Gửi lên server
+                try {
+                    val res = apis.postSync(TripSyncDTO(tripSync)).await()
+                    if (res!!.status == 200) {
+                        // Xóa hết cá tệp tin trong này
+                        tripSync.hauls.forEach { h ->
+                            h.images.split(",").forEach { img ->
+                                img.deleteOnExists()
+                            }
                         }
+                        // Xóa chuyến
+                        removeTripSync(tripSync)
                     }
-                    // Xóa chuyến
-                    removeTripSync(tripSync)
-                }
-                internetTimerChecker()
-                isSyncing = false
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if (!isInternetAvailable()) {
                     internetTimerChecker()
                     isSyncing = false
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    if (!isInternetAvailable()) {
+                        internetTimerChecker()
+                        isSyncing = false
+                    }
                 }
+            } else {
+                // Không thì tiến hành cho chạy timer để thực hiện lại
+                internetTimerChecker()
+                isSyncing = false
             }
         }
 

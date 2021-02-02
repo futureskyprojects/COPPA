@@ -9,25 +9,42 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 data class TripSync(
+    var uuid: String = UUID.randomUUID().toString(),
     @SerializedName("captain_id")
     var captainId: Int = RuntimeStorage.CurrentCaptainProfile.id,
+
     @SerializedName("culture_name")
     var cultureName: String = RuntimeStorage.CurrentCaptainProfile.cultureName,
+
     @SerializedName("departure_port")
     var departurePort: Int = 0,
+
     @SerializedName("departure_time")
     var departureTime: String = "",
+
     @SerializedName("destination_port")
     var destinationPort: Int = 0,
+
     @SerializedName("destination_time")
     var destinationTime: String = "",
+
     @SerializedName("submit_time")
     var submitTime: String = "",
+
     @SerializedName("hauls")
     var hauls: ArrayList<SpeciesSync> = ArrayList()
 ) {
-    fun getDesTime(): String {
-        return destinationTime
+    fun isSyncedAllImages(): Boolean {
+        for (h in hauls) {
+            val _imgs = h.images.split(",")
+            if (_imgs.any { it.contains(SUB_CURRENT_TRIP_FOLDER) })
+                return false
+        }
+        return true
+    }
+
+    fun departureTime(): String {
+        return departureTime
             .replace("/", "-")
             .replace(":", "")
             .replace(" ", "_")
@@ -35,6 +52,9 @@ data class TripSync(
     }
 
     companion object {
+        val SUB_CURRENT_TRIP_FOLDER =
+            "/snapshot/data/trip_${RuntimeStorage.CurrentTripSync?.departureTime()}"
+
         fun createTripSync(seaPortId: Int) {
             val tripSync = TripSync(
                 departurePort = seaPortId,
@@ -61,11 +81,28 @@ data class TripSync(
             RuntimeStorage.CurrentTripSync = null
         }
 
-        fun removeTripSync(tripSync: TripSync) {
+        fun updateTripSyncHauls(speciesSync: SpeciesSync) {
             // Clone danh sách
             val tripSyncs = ArrayList<TripSync>()
             tripSyncs.addAll(RuntimeStorage.TripSyncs)
-            tripSyncs.remove(tripSync)
+
+            // Cập nhật đường dẫn ảnh
+            for (i in 0 until tripSyncs.size) {
+                for (j in 0 until tripSyncs[i].hauls.size) {
+                    if (tripSyncs[i].hauls[j].uuid == speciesSync.uuid) {
+                        tripSyncs[i].hauls[j].images = speciesSync.images
+                    }
+                }
+            }
+
+            // Cập nhật vào bộ nhớ
+            RuntimeStorage.TripSyncs = tripSyncs.toTypedArray()
+        }
+
+        fun removeTripSync(tripSync: TripSync) {
+            // Clone danh sách
+            val tripSyncs = ArrayList<TripSync>()
+            tripSyncs.addAll(RuntimeStorage.TripSyncs.filter { it.uuid != tripSync.uuid })
 
             RuntimeStorage.TripSyncs = tripSyncs.toTypedArray()
         }

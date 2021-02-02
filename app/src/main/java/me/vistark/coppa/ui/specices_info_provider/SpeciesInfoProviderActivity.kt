@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +22,7 @@ import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.components.picked_images_preview.PickedImagePreviewAdapter
 import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.SpeciesSync
+import me.vistark.coppa.domain.entity.TripSync.Companion.SUB_CURRENT_TRIP_FOLDER
 import me.vistark.coppa.domain.entity.TripSync.Companion.addSpeciesSync
 import me.vistark.coppa.domain.entity.TripSync.Companion.updateSpeciesSync
 import me.vistark.coppa.ui.home.HomeActivity
@@ -35,7 +35,6 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleDownTopRight
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomLeft
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopRight
-import me.vistark.fastdroid.utils.MultipleLanguage
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.UriUtils.saveImage
 import me.vistark.fastdroid.utils.ViewExtension.binDateTimePicker
@@ -43,7 +42,6 @@ import me.vistark.fastdroid.utils.ViewExtension.bindPopupMenu
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
 import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.deleteOnExists
-import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -304,7 +302,7 @@ class SpeciesInfoProviderActivity :
                     // Nếu không có trong danh sách map, tiến hành lưu lại
                     uri.saveImage(
                         this,
-                        filename = "/snapshot/data/trip_${RuntimeStorage.CurrentTripSync?.getDesTime()}/${UUID.randomUUID()}.jpg"
+                        filename = "$SUB_CURRENT_TRIP_FOLDER/${UUID.randomUUID()}.jpg"
                     ).apply {
                         if (this.isNotEmpty()) {
                             snapshotPickedImages.add(this)

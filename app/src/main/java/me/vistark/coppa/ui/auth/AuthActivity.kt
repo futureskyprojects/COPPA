@@ -1,6 +1,9 @@
 package me.vistark.coppa.ui.auth
 
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.widget.EditText
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.auth_signin.*
@@ -38,6 +41,7 @@ import me.vistark.fastdroid.utils.ViewExtension.moveToTop
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
 import me.vistark.fastdroid.utils.ViewExtension.show
+import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 
 
 class AuthActivity : FastdroidActivity(
@@ -161,7 +165,21 @@ class AuthActivity : FastdroidActivity(
         }
     }
 
+    fun clearAllEdtForcus() {
+        asUsername.clearFocus()
+        aaEmail.clearFocus()
+        aaPhone.clearFocus()
+        aaShipOwner.clearFocus()
+        aaCaptain.clearFocus()
+        aaFishLicense.clearFocus()
+        aaVesselRegistration.clearFocus()
+        aaDuration.clearFocus()
+    }
+
     private fun bindDtoForRegister() {
+        asuScrvSignUp.viewTreeObserver.addOnScrollChangedListener {
+            clearAllEdtForcus()
+        }
         defaultPasswordShow.text = String.format(
             getString(R.string.yourdefaultpasswordwas____),
             DefaultValue.DefaultPassword
@@ -177,7 +195,7 @@ class AuthActivity : FastdroidActivity(
             registerRequestDTO.email = it
         }
 
-        aaTvPhone.text = aaTvPhone.text.toString()
+//        aaTvPhone.text = aaTvPhone.text.toString()
 
         aaPhone.onTextChanged {
             aaTvAlertDanger.hide()
