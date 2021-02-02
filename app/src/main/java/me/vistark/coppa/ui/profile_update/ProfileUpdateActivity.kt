@@ -19,7 +19,7 @@ import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguag
 import me.vistark.coppa.ui.auth.AuthActivity
 import me.vistark.fastdroid.core.api.JwtAuth.clearAuthentication
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
-import me.vistark.fastdroid.ui.components.languages.more_languages.MoreLangueExtensionForRecyclerView.bindMoreLanguage
+import me.vistark.fastdroid.ui.components.languages.more_languages.LangueExtensionForRecyclerView.bindMoreLanguage
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.fadeIn
 import me.vistark.fastdroid.utils.AnimationUtils.fadeOut

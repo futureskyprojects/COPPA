@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="space_default">20dp</dimen>
+    <dimen name="space_default_x2">40dp</dimen>
     <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_ssm">5dp</dimen>
 </resources>

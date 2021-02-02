@@ -2,4 +2,5 @@
 <resources>
     <dimen name="heading_image_size">180dp</dimen>
     <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_sm_x2">16dp</dimen>
 </resources>

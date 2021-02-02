@@ -3,7 +3,7 @@ package me.vistark.fastdroid.ui.components.languages.more_languages
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-object MoreLangueExtensionForRecyclerView {
+object LangueExtensionForRecyclerView {
     fun RecyclerView.bindMoreLanguage(
         images: Array<String>,
         currentImages: String = "",
@@ -15,7 +15,7 @@ object MoreLangueExtensionForRecyclerView {
         lm.orientation = LinearLayoutManager.HORIZONTAL
         this.layoutManager = lm
 
-        val adapter = MoreLanguageAdapter(images, currentImages, isCache, onClicked)
+        val adapter = LanguageAdapter(images, currentImages, isCache, onClicked)
         this.adapter = adapter
     }
 }

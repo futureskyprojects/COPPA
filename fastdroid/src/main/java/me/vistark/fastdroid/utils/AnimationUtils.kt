@@ -87,8 +87,8 @@ object AnimationUtils {
         val anim: Animation = ScaleAnimation(
             1f, 0f,  // Start and end values for the X axis scaling
             1f, 0f,  // Start and end values for the Y axis scaling
-            Animation.RELATIVE_TO_SELF, 0f,  // Pivot point of X scaling
-            Animation.RELATIVE_TO_SELF, 1f
+            Animation.RELATIVE_TO_SELF, 1f,  // Pivot point of X scaling
+            Animation.RELATIVE_TO_SELF, 0f
         ) // Pivot point of Y scaling
 
         // anim.fillAfter = true // Needed to keep the result of the animation
@@ -165,8 +165,8 @@ object AnimationUtils {
         val anim: Animation = ScaleAnimation(
             0f, 1f,  // Start and end values for the X axis scaling
             0f, 1f,  // Start and end values for the Y axis scaling
-            Animation.RELATIVE_TO_SELF, 0f,  // Pivot point of X scaling
-            Animation.RELATIVE_TO_SELF, 1f
+            Animation.RELATIVE_TO_SELF, 1f,  // Pivot point of X scaling
+            Animation.RELATIVE_TO_SELF, 0f
         ) // Pivot point of Y scaling
 
         // anim.fillAfter = true // Needed to keep the result of the animation

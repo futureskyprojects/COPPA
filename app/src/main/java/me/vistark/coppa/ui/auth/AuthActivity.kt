@@ -1,9 +1,9 @@
 package me.vistark.coppa.ui.auth
 
 import android.os.Bundle
-import android.view.MotionEvent
+import android.util.Log
 import android.view.View
-import android.widget.EditText
+import com.google.gson.Gson
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.auth_signin.*
@@ -19,19 +19,24 @@ import me.vistark.coppa.application.RuntimeStorage.CurrentUsername
 import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
 import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
 import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguage
-import me.vistark.coppa.ui.home.HomeActivity
+import me.vistark.coppa.ui.auth.app_languages.LRecyclerViewExtension.bindL
 import me.vistark.coppa.ui.splash_screen.SplashActivity
 import me.vistark.fastdroid.core.api.JwtAuth.updateJwtAuth
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
-import me.vistark.fastdroid.ui.components.languages.more_languages.MoreLangueExtensionForRecyclerView.bindMoreLanguage
+import me.vistark.fastdroid.ui.components.languages.more_languages.LangueExtensionForRecyclerView.bindMoreLanguage
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
+import me.vistark.fastdroid.utils.AnimationUtils.fadeIn
+import me.vistark.fastdroid.utils.AnimationUtils.fadeOut
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomRight
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownTopLeft
+import me.vistark.fastdroid.utils.AnimationUtils.scaleDownTopRight
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomLeft
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopLeft
+import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopRight
 import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.EdittextUtils.required
 import me.vistark.fastdroid.utils.EdittextUtils.validate
+import me.vistark.fastdroid.utils.GlideUtils.load
 import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
@@ -41,7 +46,6 @@ import me.vistark.fastdroid.utils.ViewExtension.moveToTop
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
 import me.vistark.fastdroid.utils.ViewExtension.show
-import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 
 
 class AuthActivity : FastdroidActivity(
@@ -71,11 +75,29 @@ class AuthActivity : FastdroidActivity(
     }
 
     private fun initMoreLanguages() {
-        moreLanguages.bindMoreLanguage(RuntimeStorage.Countries.map { it.flagIcon.coppaCorrectResourcePath() }
-            .toTypedArray(),
-            RuntimeStorage.Translates.localization.currentCulture.flagIcon.coppaCorrectResourcePath(),
-            true
-        ) { selected ->
+        Log.w("ABC", Gson().toJson(RuntimeStorage.Countries))
+        crrLang.load(RuntimeStorage.Countries.firstOrNull {
+            it.cultureName == RuntimeStorage.SavedCulture ||
+                    it.cultureName == RuntimeStorage.Translates.localization.currentCulture.cultureName
+        }?.flagIcon?.coppaCorrectResourcePath() ?: "")
+        moreLanguages.visibility = View.GONE
+        languageOverlay.visibility = View.GONE
+        cvCurrentLanguage.onTap {
+            if (moreLanguages.visibility == View.VISIBLE) {
+                cvCurrentLanguage.animation.cancel()
+                return@onTap
+            }
+            moreLanguages.visibility = View.VISIBLE
+            languageOverlay.visibility = View.VISIBLE
+            languageOverlay.fadeIn()
+            moreLanguages.scaleUpTopRight()
+            languageOverlay.setOnClickListener {
+                languageOverlay.fadeOut()
+                moreLanguages.scaleDownTopRight()
+                languageOverlay.setOnClickListener(null)
+            }
+        }
+        moreLanguages.bindL {
             if (!isInternetAvailable()) {
                 Toasty.warning(
                     this,
@@ -85,12 +107,31 @@ class AuthActivity : FastdroidActivity(
                 ).show()
             } else {
                 syncLanguage(
-                    cultureName = RuntimeStorage.Countries.firstOrNull { it.flagIcon.coppaCorrectResourcePath() == selected }?.cultureName
-                        ?: "",
+                    cultureName = it.cultureName,
                     isReload = true
                 )
             }
         }
+//        moreLanguages.bindMoreLanguage(RuntimeStorage.Countries.map { it.flagIcon.coppaCorrectResourcePath() }
+//            .toTypedArray(),
+//            RuntimeStorage.Translates.localization.currentCulture.flagIcon.coppaCorrectResourcePath(),
+//            true
+//        ) { selected ->
+//            if (!isInternetAvailable()) {
+//                Toasty.warning(
+//                    this,
+//                    L(getString(R.string.YoutMustConnectToInternetForChangeLanguage)),
+//                    Toasty.LENGTH_SHORT,
+//                    true
+//                ).show()
+//            } else {
+//                syncLanguage(
+//                    cultureName = RuntimeStorage.Countries.firstOrNull { it.flagIcon.coppaCorrectResourcePath() == selected }?.cultureName
+//                        ?: "",
+//                    isReload = true
+//                )
+//            }
+//        }
     }
 
     private fun initDefaultData() {

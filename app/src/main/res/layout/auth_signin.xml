@@ -65,25 +65,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/login" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_centerVertical="true"
-                android:background="@color/fastDroidLineColor" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="10dp"
-                android:text="@string/or"
-                android:textColor="@color/fastDroidTextColor" />
-        </RelativeLayout>
+        <include layout="@layout/control_line_or" />
 
         <Button
             android:id="@+id/asiBtnSignUp"
