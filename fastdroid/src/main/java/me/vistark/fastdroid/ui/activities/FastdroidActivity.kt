@@ -15,7 +15,6 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.net.toUri
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver
 import me.vistark.fastdroid.broadcasts.FastdroidBroadcastReceiver.Companion.FASTDROID_BROADCAST_ACTION
 import me.vistark.fastdroid.language.LanguageConfig
@@ -41,6 +40,7 @@ abstract class FastdroidActivity(
     var windowBackground: Int = -1
 ) : AppCompatActivity() {
     var statusBarHeight: Int = 0
+    var navigationBarHeight: Int = 0
     private var mFastdroidBroadcastReciver: FastdroidBroadcastReceiver? = null
 
     var reqOri = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -61,6 +61,8 @@ abstract class FastdroidActivity(
                 )
             )
         }
+
+        intSizeInfos()
 
         initFileUtils()
 
@@ -100,6 +102,13 @@ abstract class FastdroidActivity(
         // Cấu hình quay
         requestedOrientation = reqOri
 
+    }
+
+    private fun intSizeInfos() {
+        val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        navigationBarHeight = if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else 0
     }
 
     override fun attachBaseContext(newBase: Context?) {

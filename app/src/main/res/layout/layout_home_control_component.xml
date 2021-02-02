@@ -28,6 +28,12 @@
         <include layout="@layout/layout_control_component_in_trip" />
 
         <include layout="@layout/layout_control_component_out_trip" />
+
+        <LinearLayout
+            android:id="@+id/controlPanelBottomSpace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

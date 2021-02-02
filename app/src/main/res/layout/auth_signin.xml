@@ -44,7 +44,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:text="@string/forgotpassword"
-                android:textColor="@color/fastDroidPrimaryColor" />
+                android:textColor="@color/fastDroidPrimaryColor"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <EditText

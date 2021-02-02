@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.android.synthetic.main.layout_control_component_in_trip.*
 import kotlinx.android.synthetic.main.layout_control_component_out_trip.*
+import kotlinx.android.synthetic.main.layout_home_control_component.*
 import kotlinx.android.synthetic.main.layout_home_header_component.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -100,6 +101,7 @@ class HomeActivity : FastdroidActivity(
     }
 
     private fun initControlPanelViews() {
+        controlPanelBottomSpace.layoutParams.height = navigationBarHeight
         if (RuntimeStorage.CurrentTripSync != null) {
             showInTrip()
         } else {
