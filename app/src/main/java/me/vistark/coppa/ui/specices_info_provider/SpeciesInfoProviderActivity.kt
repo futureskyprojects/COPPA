@@ -2,9 +2,11 @@ package me.vistark.coppa.ui.specices_info_provider
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import es.dmoral.toasty.Toasty
@@ -22,6 +24,7 @@ import me.vistark.coppa.components.picked_images_preview.PickedImagePreviewAdapt
 import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.SpeciesSync
 import me.vistark.coppa.domain.entity.TripSync.Companion.addSpeciesSync
+import me.vistark.coppa.domain.entity.TripSync.Companion.updateSpeciesSync
 import me.vistark.coppa.ui.home.HomeActivity
 import me.vistark.coppa.ui.species_sync_review.SpeciesSyncReviewActivity
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
@@ -52,6 +55,8 @@ class SpeciesInfoProviderActivity :
 
     val pickedImagesUris = ArrayList<Uri>()
     val mapImagesAddress = HashMap<String, Uri>()
+    val removedImages = ArrayList<String>()
+
     lateinit var adapter: PickedImagePreviewAdapter
 
     var selectedSpeciesId = -1
@@ -65,31 +70,31 @@ class SpeciesInfoProviderActivity :
         if (!collectReceiveDatas())
             return
 
-        // Khởi tạo hành động cho việc update nếu đang ở chế độ update
-        if (isUpdate)
-            initUpdateData()
-
         initEvents()
 
         pickedImages()
 
         rlContainer.scaleUpCenter()
 
+        // Khởi tạo hành động cho việc update nếu đang ở chế độ update
+        if (isUpdate)
+            initUpdateData()
+
         // Gọi validate lại một lần để khóa nút nếu form không hợp lệ
         validate()
-
     }
 
     private fun initUpdateData() {
         // Tìm cách xóa ảnh trong folder khi bị xóa qua cập nhật
         currentSpeciesSync.images.split(",").forEach {
             val newUri = it.toUri()
-            mapImagesAddress.put(it, newUri)
+            mapImagesAddress[it] = newUri
             pickedImagesUris.add(newUri)
         }
+        updatePickedImages()
         edtSpeciesLength.setText(currentSpeciesSync.length.toString())
         edtSpeciesWeight.setText(currentSpeciesSync.weight.toString())
-        tvCatchedAt.setText(currentSpeciesSync.catchedAt)
+        tvCatchedAt.text = currentSpeciesSync.catchedAt
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -113,7 +118,7 @@ class SpeciesInfoProviderActivity :
             mapImagesAddress.entries.forEach { map ->
                 if (map.value == crrUri) {
                     mapImagesAddress.remove(map.key)
-                    map.key.deleteOnExists()
+                    removedImages.add(map.key)
                     return@forEach
                 }
             }
@@ -201,6 +206,9 @@ class SpeciesInfoProviderActivity :
         }
 
         tvCatchedAt.binDateTimePicker {
+        }
+
+        tvCatchedAt.doOnTextChanged { text, start, before, count ->
             validate()
             currentSpeciesSync.catchedAt = tvCatchedAt.text.toString()
         }
@@ -308,8 +316,18 @@ class SpeciesInfoProviderActivity :
             // Cập nhật vào SpeciesSync
             currentSpeciesSync.images = snapshotPickedImages.joinToString(",")
 
-            // Thêm mới vào chuyến đi hiện tại
-            addSpeciesSync(currentSpeciesSync)
+            if (isUpdate) {
+                // Cập nhật vào chuyến đi hiện tại
+                updateSpeciesSync(currentSpeciesSync)
+            } else {
+                // Thêm mới vào chuyến đi hiện tại
+                addSpeciesSync(currentSpeciesSync)
+            }
+
+            // Xóa các ảnh nằm trong mục chờ xóa
+            removedImages.forEach {
+                it.deleteOnExists()
+            }
 
             runOnUiThread {
                 loading.dismiss()
@@ -355,5 +373,9 @@ class SpeciesInfoProviderActivity :
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 }

@@ -75,15 +75,7 @@ class BackgroundService : FastdroidService(
         val criteria = Criteria()
         val provider = mLocationManager?.getBestProvider(criteria, false)
         val location: Location? = provider?.let { mLocationManager?.getLastKnownLocation(it) }
-        if (location != null) {
-            onLocationChanged(location)
-            Log.e(
-                "[SERVICE]location",
-                "Latest know: [${location.latitude}, ${location.longitude}]"
-            )
-        } else {
-            Log.e("[SERVICE]location", "Not available")
-        }
+
         mLocationManager?.requestLocationUpdates(
             LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
             LOCATION_REFRESH_DISTANCE, this
