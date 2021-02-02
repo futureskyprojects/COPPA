@@ -23,6 +23,7 @@ import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.SpeciesSync
 import me.vistark.coppa.domain.entity.TripSync.Companion.addSpeciesSync
 import me.vistark.coppa.ui.home.HomeActivity
+import me.vistark.coppa.ui.species_sync_review.SpeciesSyncReviewActivity
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomLeft
@@ -38,19 +39,24 @@ import me.vistark.fastdroid.utils.ViewExtension.binDateTimePicker
 import me.vistark.fastdroid.utils.ViewExtension.bindPopupMenu
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
+import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.deleteOnExists
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class SpeciesInfoProviderActivity :
     FastdroidActivity(R.layout.activity_species_info_provider, isCanAutoTranslate = true) {
 
-    val currentSpeciesSync = SpeciesSync()
+    var currentSpeciesSync = SpeciesSync()
 
     val pickedImagesUris = ArrayList<Uri>()
+    val mapImagesAddress = HashMap<String, Uri>()
     lateinit var adapter: PickedImagePreviewAdapter
 
     var selectedSpeciesId = -1
+
+    var isUpdate = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,13 +65,31 @@ class SpeciesInfoProviderActivity :
         if (!collectReceiveDatas())
             return
 
+        // Khởi tạo hành động cho việc update nếu đang ở chế độ update
+        if (isUpdate)
+            initUpdateData()
+
         initEvents()
 
         pickedImages()
 
         rlContainer.scaleUpCenter()
 
+        // Gọi validate lại một lần để khóa nút nếu form không hợp lệ
+        validate()
 
+    }
+
+    private fun initUpdateData() {
+        // Tìm cách xóa ảnh trong folder khi bị xóa qua cập nhật
+        currentSpeciesSync.images.split(",").forEach {
+            val newUri = it.toUri()
+            mapImagesAddress.put(it, newUri)
+            pickedImagesUris.add(newUri)
+        }
+        edtSpeciesLength.setText(currentSpeciesSync.length.toString())
+        edtSpeciesWeight.setText(currentSpeciesSync.weight.toString())
+        tvCatchedAt.setText(currentSpeciesSync.catchedAt)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -82,7 +106,17 @@ class SpeciesInfoProviderActivity :
 
         adapter = PickedImagePreviewAdapter(pickedImagesUris)
         adapter.onDelete = {
+            val crrUri = pickedImagesUris[it]
             pickedImagesUris.removeAt(it)
+
+            // Nếu ảnh thuộc một ảnh trước đó, và giờ đang cần xóa
+            mapImagesAddress.entries.forEach { map ->
+                if (map.value == crrUri) {
+                    mapImagesAddress.remove(map.key)
+                    map.key.deleteOnExists()
+                    return@forEach
+                }
+            }
             updatePickedImages()
         }
         rvPickedImages.adapter = adapter
@@ -120,6 +154,13 @@ class SpeciesInfoProviderActivity :
 
         currentSpeciesSync.specieId = selectedSpeciesId
 
+        val rawData = intent.getStringExtra(SpeciesSync::class.java.simpleName)
+        if (!rawData.isNullOrEmpty()) {
+            // Nếu raw data truyền sang không rỗng hay null, tức đang thực hiện hành động update
+            currentSpeciesSync = Gson().fromJson(rawData, SpeciesSync::class.java)
+            isUpdate = true
+        }
+
         return true
     }
 
@@ -130,6 +171,9 @@ class SpeciesInfoProviderActivity :
 
         asIvBackIcon.onTap {
             animateFinish()
+        }
+        asipLnNoPickedImages.setOnClickListener {
+            asIvAddImage.performClick()
         }
         asIvAddImage.bindPopupMenu(R.menu.image_picker_options) {
             when (it) {
@@ -205,24 +249,27 @@ class SpeciesInfoProviderActivity :
             }
 
             if (validate()) {
-                // Nếu đã hợp lệ
-                if (HomeActivity.PUBLIC_CURRENT_COORDINATES == null) {
-                    Toasty.error(
-                        this,
-                        L(getString(R.string.PleaseWaitForAFewMinutesSystemIsDetectYourLocationCoordinates)),
-                        Toasty.LENGTH_SHORT,
-                        true
-                    ).show()
-                } else {
-                    // Nếu đã có vị trí
-                    currentSpeciesSync.long =
-                        HomeActivity.PUBLIC_CURRENT_COORDINATES!!.longitude.toString()
-                    currentSpeciesSync.lat =
-                        HomeActivity.PUBLIC_CURRENT_COORDINATES!!.latitude.toString()
+                if (!isUpdate) {
+                    // Nếu không phải là trường hợp update thì tiến hành kiểm tra tọa độ
+                    if (HomeActivity.PUBLIC_CURRENT_COORDINATES == null) {
+                        Toasty.error(
+                            this,
+                            L(getString(R.string.PleaseWaitForAFewMinutesSystemIsDetectYourLocationCoordinates)),
+                            Toasty.LENGTH_SHORT,
+                            true
+                        ).show()
+                        return@onTap
+                    } else {
+                        // Nếu đã có vị trí
+                        currentSpeciesSync.long =
+                            HomeActivity.PUBLIC_CURRENT_COORDINATES!!.longitude.toString()
+                        currentSpeciesSync.lat =
+                            HomeActivity.PUBLIC_CURRENT_COORDINATES!!.latitude.toString()
 
-                    // Tiến hành xử lý và lưu (hình ảnh & dữ liệu)
-                    saveProcessing()
+                    }
                 }
+                // Tiến hành xử lý và lưu (hình ảnh & dữ liệu)
+                saveProcessing()
             } else {
                 Toasty.error(
                     this,
@@ -239,15 +286,21 @@ class SpeciesInfoProviderActivity :
         val loading = showLoadingBase(L(getString(R.string.SavingYourCatchedSpecies)))
         val snapshotPickedImages = ArrayList<String>()
 
+        // Tự động thêm cách ảnh đã có trước đó vào danh sách
+        snapshotPickedImages.addAll(mapImagesAddress.keys)
+
         Thread {
             // Lưu danh sách các ảnh này vào cache
             pickedImagesUris.forEach { uri ->
-                uri.saveImage(
-                    this,
-                    filename = "/snapshot/data/trip_${RuntimeStorage.CurrentTripSync?.getDesTime()}/${UUID.randomUUID()}.jpg"
-                ).apply {
-                    if (this.isNotEmpty()) {
-                        snapshotPickedImages.add(this)
+                if (!mapImagesAddress.containsValue(uri)) {
+                    // Nếu không có trong danh sách map, tiến hành lưu lại
+                    uri.saveImage(
+                        this,
+                        filename = "/snapshot/data/trip_${RuntimeStorage.CurrentTripSync?.getDesTime()}/${UUID.randomUUID()}.jpg"
+                    ).apply {
+                        if (this.isNotEmpty()) {
+                            snapshotPickedImages.add(this)
+                        }
                     }
                 }
             }
@@ -273,7 +326,7 @@ class SpeciesInfoProviderActivity :
     }
 
     fun validate(): Boolean {
-        if (pickedImagesUris.isEmpty() ||
+        if (pickedImagesUris.size < MinImageRequest ||
             edtSpeciesLength.text.isEmpty() ||
             edtSpeciesLength.text.toString().toFloatOrNull() == null ||
             edtSpeciesWeight.text.isEmpty() ||
@@ -290,6 +343,11 @@ class SpeciesInfoProviderActivity :
 
     fun animateFinish() {
         rlContainer.scaleDownCenter {
+            if (isUpdate) {
+                // Khoải động màn hình danh sách các loài đã bắt
+                startActivity(SpeciesSyncReviewActivity::class.java)
+                overridePendingTransition(-1, -1)
+            }
             finish()
         }
     }
