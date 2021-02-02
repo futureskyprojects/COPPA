@@ -20,10 +20,17 @@ class TripHistoryAdapter : RecyclerView.Adapter<TripHistoryViewHolder>(),
     val runtimes = ArrayList<TripLog>()
 
     init {
+        sync()
+    }
+
+    fun sync(onDone: (() -> Unit)? = null) {
+        runtimes.clear()
         runtimes.addAll(RuntimeStorage.TripLogs)
         RuntimeStorage.TripSyncs.forEach {
             runtimes.add(0, it.toTripLog())
         }
+
+        notifyDataSetChanged()
 
         GlobalScope.launch {
             try {
@@ -36,10 +43,11 @@ class TripHistoryAdapter : RecyclerView.Adapter<TripHistoryViewHolder>(),
                     RuntimeStorage.TripSyncs.forEach {
                         runtimes.add(0, it.toTripLog())
                     }
-                    notifyDataSetChanged()
                 }
             } catch (e: Exception) {
 
+            } finally {
+                onDone?.invoke()
             }
         }
     }
