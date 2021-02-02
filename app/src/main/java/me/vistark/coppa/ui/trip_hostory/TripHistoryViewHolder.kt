@@ -2,6 +2,7 @@ package me.vistark.coppa.ui.trip_hostory
 
 import android.annotation.SuppressLint
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -25,11 +26,15 @@ class TripHistoryViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val ithTvEndSeaPortSymbol: TextView = v.findViewById(R.id.ithTvEndSeaPortSymbol)
     val ithTvEndDepartureTime: TextView = v.findViewById(R.id.ithTvEndDepartureTime)
 
+    val ivNextIcon: ImageView = v.findViewById(R.id.ivNextIcon)
+
 
     @SuppressLint("SetTextI18n")
     fun bind(tripLog: TripLog) {
         if (tripLog.id <= 0) {
             ithLnIsSyncing.visibility = View.VISIBLE
+        } else {
+            ivNextIcon.setImageResource(R.drawable.ic_next_green)
         }
         val startSeaPort = RuntimeStorage.SeaPorts.firstOrNull { it.id == tripLog.departurePort }
         val endSeaPort = RuntimeStorage.SeaPorts.firstOrNull { it.id == tripLog.destinationPort }
