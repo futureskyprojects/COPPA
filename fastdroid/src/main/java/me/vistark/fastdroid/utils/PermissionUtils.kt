@@ -43,7 +43,7 @@ object PermissionUtils {
 
     fun FastdroidActivity.requestAllPermissions(
         permissions: ArrayList<RequirePermission> = _permissions,
-        title: String = L("RequestPermission"),
+        title: String = L(getString(R.string.RequestPermission)),
         onCompleted: ((Boolean) -> Unit),
         onDenied: (() -> Unit)?
     ) {

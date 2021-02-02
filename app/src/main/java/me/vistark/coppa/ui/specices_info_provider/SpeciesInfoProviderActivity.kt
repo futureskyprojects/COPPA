@@ -36,6 +36,7 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomLeft
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopRight
 import me.vistark.fastdroid.utils.MultipleLanguage.L
+import me.vistark.fastdroid.utils.NumberUtils.toNumberString
 import me.vistark.fastdroid.utils.UriUtils.saveImage
 import me.vistark.fastdroid.utils.ViewExtension.binDateTimePicker
 import me.vistark.fastdroid.utils.ViewExtension.bindPopupMenu
@@ -90,8 +91,8 @@ class SpeciesInfoProviderActivity :
             pickedImagesUris.add(newUri)
         }
         updatePickedImages()
-        edtSpeciesLength.setText(currentSpeciesSync.length.toString())
-        edtSpeciesWeight.setText(currentSpeciesSync.weight.toString())
+        edtSpeciesLength.setText(currentSpeciesSync.length.toNumberString())
+        edtSpeciesWeight.setText(currentSpeciesSync.weight.toNumberString())
         tvCatchedAt.text = currentSpeciesSync.catchedAt
     }
 
