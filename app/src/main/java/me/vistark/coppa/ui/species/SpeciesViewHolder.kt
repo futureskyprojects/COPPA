@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import me.vistark.coppa.R
 import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.domain.entity.Species
+import me.vistark.fastdroid.ui.dialog.PhotoViewDialog.bindZoomView
 import me.vistark.fastdroid.utils.GlideUtils.load
 
 class SpeciesViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -17,6 +18,13 @@ class SpeciesViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
     fun bind(species: Species) {
         isciIvSpeciesCategoryImage.load(species.image.coppaCorrectResourcePath(), true)
+        isciIvSpeciesCategoryImage.setOnClickListener {
+            isciCvRoot.performClick()
+        }
+        isciIvSpeciesCategoryImage.setOnLongClickListener {
+            isciIvSpeciesCategoryImage.bindZoomView(species.image.coppaCorrectResourcePath())
+            return@setOnLongClickListener true
+        }
         isciTvSpeciesCategoryName.text = species.name
         isciTvSpeciesCategoryName.isSelected = true
     }

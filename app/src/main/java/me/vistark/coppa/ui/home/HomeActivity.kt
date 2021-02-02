@@ -38,6 +38,7 @@ import me.vistark.coppa.ui.trip_hostory.TripHistoryActivity
 import me.vistark.fastdroid.core.models.FastdroidCoordinate
 import me.vistark.fastdroid.services.FastdroidService.Companion.isServiceRunning
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
+import me.vistark.fastdroid.ui.dialog.PhotoViewDialog.bindZoomView
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomLeft
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownBottomRight
@@ -213,6 +214,11 @@ class HomeActivity : FastdroidActivity(
             val intent = Intent(this, ProfileUpdateActivity::class.java)
             startActivityForResult(intent, UPDATE_PROFILE_REQUEST_CODE)
             overridePendingTransition(-1, -1)
+        }
+
+        lhhcIvUserAvatar.setOnLongClickListener {
+            lhhcIvUserAvatar.bindZoomView(RuntimeStorage.CurrentCaptainProfile.image.coppaCorrectResourcePath())
+            return@setOnLongClickListener true
         }
 
         // Khi nhán vào nút thêm loài bắt được vào chuyến

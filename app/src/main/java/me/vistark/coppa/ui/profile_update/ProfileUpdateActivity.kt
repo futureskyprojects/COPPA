@@ -8,6 +8,7 @@ import android.view.View
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_profile_update.*
+import kotlinx.android.synthetic.main.layout_home_header_component.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vistark.coppa.R
@@ -20,6 +21,7 @@ import me.vistark.coppa.ui.auth.AuthActivity
 import me.vistark.fastdroid.core.api.JwtAuth.clearAuthentication
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.ui.components.languages.more_languages.LangueExtensionForRecyclerView.bindMoreLanguage
+import me.vistark.fastdroid.ui.dialog.PhotoViewDialog.bindZoomView
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.fadeIn
 import me.vistark.fastdroid.utils.AnimationUtils.fadeOut
@@ -200,6 +202,10 @@ class ProfileUpdateActivity : FastdroidActivity(
 
     private fun loadTempAvatarUri(uri: Uri?) {
         fastdroidCircleAvatar.setImageURI(uri)
+        fastdroidCircleAvatar.setOnLongClickListener {
+            fastdroidCircleAvatar.bindZoomView(uri)
+            return@setOnLongClickListener true
+        }
         uri?.saveImage(
             this,
             filename = "/snapshot/data/avatar/${UUID.randomUUID()}.jpg"
@@ -214,6 +220,10 @@ class ProfileUpdateActivity : FastdroidActivity(
     private fun bind() {
         fastdroidCircleAvatar = findViewById(R.id.fastdroidCircleAvatar)
         fastdroidCircleAvatar.load(dto.image.coppaCorrectResourcePath(), true)
+        fastdroidCircleAvatar.setOnLongClickListener {
+            fastdroidCircleAvatar.bindZoomView(dto.image.coppaCorrectResourcePath())
+            return@setOnLongClickListener true
+        }
         fastdroidCircleAvatar.bindPopupMenu(R.menu.image_picker_options) {
             when (it) {
                 R.id.ipoCamera -> {

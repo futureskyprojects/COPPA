@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import me.vistark.coppa.R
+import me.vistark.fastdroid.ui.dialog.PhotoViewDialog.bindZoomView
 
 class PickedImagePreviewViewHolder(v: View) : RecyclerView.ViewHolder(v) {
     val iisoIvPreview: ImageView = v.findViewById(R.id.iisoIvPreview)
@@ -14,5 +15,9 @@ class PickedImagePreviewViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
     fun bind(uri: Uri) {
         iisoIvPreview.setImageURI(uri)
+        iisoIvPreview.setOnLongClickListener {
+            iisoIvPreview.bindZoomView(uri)
+            return@setOnLongClickListener true
+        }
     }
 }
