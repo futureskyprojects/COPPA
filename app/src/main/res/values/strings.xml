@@ -100,4 +100,7 @@
     <string name="signout">SignOut</string>
     <string name="syncingwheninternetavailabe">SyncingWhenInternetAvailabe</string>
     <string name="title_activity_maps">Map</string>
+    <string name="DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone">DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone.</string>
+    <string name="DeleteSuccessful">DeleteSuccessful</string>
+    <string name="DeleteFail">DeleteFail</string>
 </resources>

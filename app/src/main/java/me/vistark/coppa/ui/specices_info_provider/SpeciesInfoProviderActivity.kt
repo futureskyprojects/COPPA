@@ -235,7 +235,7 @@ class SpeciesInfoProviderActivity :
 
 
         asBtnConfirm.onTap {
-            if (pickedImagesUris.isEmpty() || pickedImagesUris.size < MinImageRequest) {
+            if (pickedImagesUris.size < MinImageRequest) {
                 Toasty.error(
                     this,
                     String.format(

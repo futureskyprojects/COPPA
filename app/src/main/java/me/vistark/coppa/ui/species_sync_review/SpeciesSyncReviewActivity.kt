@@ -12,11 +12,13 @@ import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.SpeciesCategory
 import me.vistark.coppa.domain.entity.SpeciesSync
+import me.vistark.coppa.domain.entity.TripSync
 import me.vistark.coppa.ui.category.CategoryActivity
 import me.vistark.coppa.ui.specices_info_provider.SpeciesInfoProviderActivity
 import me.vistark.coppa.ui.species.SpeciesActivity
 import me.vistark.coppa.ui.species.SpeciesAdapter
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
+import me.vistark.fastdroid.ui.dialog.ConfirmDialog.deleteConfirm
 import me.vistark.fastdroid.utils.AnimationUtils.scaleDownCenter
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.MultipleLanguage
@@ -70,6 +72,28 @@ class SpeciesSyncReviewActivity : FastdroidActivity(
             startActivity(intent)
             overridePendingTransition(-1, -1)
             animateFinish()
+        }
+        adapter.onDelete = { species ->
+            deleteConfirm(getString(R.string.DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone)) {
+                if (it) {
+                    if (TripSync.removeSpeciesSync(species)) {
+                        Toasty.success(
+                            this,
+                            getString(R.string.DeleteSuccessful),
+                            Toasty.LENGTH_SHORT,
+                            true
+                        ).show()
+                        adapter.notifyDataSetChanged()
+                    } else {
+                        Toasty.error(
+                            this,
+                            getString(R.string.DeleteFail),
+                            Toasty.LENGTH_SHORT,
+                            true
+                        ).show()
+                    }
+                }
+            }
         }
         asRvSpecies.adapter = adapter
     }

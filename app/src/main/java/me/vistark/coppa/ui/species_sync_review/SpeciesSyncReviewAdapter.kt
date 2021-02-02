@@ -8,10 +8,11 @@ import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.domain.entity.Species
 import me.vistark.coppa.domain.entity.SpeciesSync
 import me.vistark.fastdroid.interfaces.IClickable
+import me.vistark.fastdroid.interfaces.IDeletable
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 
 class SpeciesSyncReviewAdapter() : RecyclerView.Adapter<SpeciesSyncReviewViewHolder>(),
-    IClickable<SpeciesSync> {
+    IClickable<SpeciesSync>, IDeletable<SpeciesSync> {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpeciesSyncReviewViewHolder {
         val v = LayoutInflater.from(parent.context)
@@ -25,6 +26,10 @@ class SpeciesSyncReviewAdapter() : RecyclerView.Adapter<SpeciesSyncReviewViewHol
         holderSyncReview.isciCvRoot.onTap {
             onClick?.invoke(current)
         }
+        holderSyncReview.isciCvRoot.setOnLongClickListener {
+            onDelete?.invoke(current)
+            return@setOnLongClickListener true
+        }
     }
 
     override fun getItemCount(): Int {
@@ -32,4 +37,5 @@ class SpeciesSyncReviewAdapter() : RecyclerView.Adapter<SpeciesSyncReviewViewHol
     }
 
     override var onClick: ((SpeciesSync) -> Unit)? = null
+    override var onDelete: ((SpeciesSync) -> Unit)? = null
 }

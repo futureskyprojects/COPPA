@@ -2,8 +2,10 @@ package me.vistark.coppa.domain.entity
 
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 data class SpeciesSync(
+    var uuid: String = UUID.randomUUID().toString(),
     @SerializedName("catched_at")
     var catchedAt: String = "",
     @SerializedName("images")

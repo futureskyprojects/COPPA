@@ -70,10 +70,32 @@ data class TripSync(
             RuntimeStorage.TripSyncs = tripSyncs.toTypedArray()
         }
 
-        fun addSpeciesSync(speciesSync: SpeciesSync) {
+        fun addSpeciesSync(speciesSync: SpeciesSync): Boolean {
             val tripSync = RuntimeStorage.CurrentTripSync?.clone()
                 ?: throw Exception("Current trip can not be null")
             tripSync.hauls.add(speciesSync)
+            RuntimeStorage.CurrentTripSync = tripSync
+            return RuntimeStorage.CurrentTripSync?.hauls?.any { it.uuid == speciesSync.uuid }
+                ?: false
+        }
+
+        fun removeSpeciesSync(speciesSync: SpeciesSync): Boolean {
+            val tripSync = RuntimeStorage.CurrentTripSync?.clone()
+                ?: throw Exception("Current trip can not be null")
+            tripSync.hauls.remove(speciesSync)
+            RuntimeStorage.CurrentTripSync = tripSync
+            return RuntimeStorage.CurrentTripSync?.hauls?.all { it.uuid != speciesSync.uuid }
+                ?: true
+        }
+
+        fun updateSpeciesSync(speciesSync: SpeciesSync) {
+            val tripSync = RuntimeStorage.CurrentTripSync?.clone()
+                ?: throw Exception("Current trip can not be null")
+            for (i in 0 until tripSync.hauls.size) {
+                if (tripSync.hauls[i].uuid == speciesSync.uuid) {
+                    tripSync.hauls[i] = speciesSync
+                }
+            }
             RuntimeStorage.CurrentTripSync = tripSync
         }
     }
