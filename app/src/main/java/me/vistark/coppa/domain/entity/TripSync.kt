@@ -9,6 +9,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 data class TripSync(
+    @SerializedName("uuid")
     var uuid: String = UUID.randomUUID().toString(),
     @SerializedName("captain_id")
     var captainId: Int = RuntimeStorage.CurrentCaptainProfile.id,

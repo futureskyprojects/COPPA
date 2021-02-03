@@ -10,6 +10,7 @@ import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,18 +26,19 @@ import me.vistark.fastdroid.core.models.FastdroidCoordinate
 import me.vistark.fastdroid.services.FastdroidService
 import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
-import me.vistark.fastdroid.utils.ObjectUtils.clone
 import me.vistark.fastdroid.utils.PermissionUtils.isPermissionGranted
+import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
+import me.vistark.fastdroid.utils.storage.FastdroidFileUtils
 import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.deleteOnExists
+import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.saveToFile
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.HttpException
-import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import java.io.File
-import java.sql.Time
+import java.io.PrintStream
+import java.io.PrintWriter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class BackgroundService : FastdroidService(
@@ -161,6 +163,7 @@ class BackgroundService : FastdroidService(
                 // Tách ra danh sách các file ảnh
                 val images = tripSync.hauls[i].images.split(",")
                     .filter { it.isNotEmpty() && it.isNotBlank() }
+
                 // Upload từng file ảnh lên
                 images.forEach {
                     if (it.contains(TripSync.SUB_CURRENT_TRIP_FOLDER)) {
@@ -212,18 +215,16 @@ class BackgroundService : FastdroidService(
                         }
                         // Xóa chuyến
                         removeTripSync(tripSync)
-
                         // Thông báo rằng vừa sync xong một chuyến
                         sendSignal(SYNC_DONE, "")
                     }
-                    internetTimerChecker()
-                    isSyncing = false
+                } catch (hr: HttpException) {
+                    hr.printStackTrace()
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    if (!isInternetAvailable()) {
-                        internetTimerChecker()
-                        isSyncing = false
-                    }
+                } finally {
+                    internetTimerChecker()
+                    isSyncing = false
                 }
             } else {
                 // Không thì tiến hành cho chạy timer để thực hiện lại
@@ -231,6 +232,5 @@ class BackgroundService : FastdroidService(
                 isSyncing = false
             }
         }
-
     }
 }

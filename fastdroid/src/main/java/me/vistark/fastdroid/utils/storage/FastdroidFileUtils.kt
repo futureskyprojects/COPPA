@@ -23,6 +23,24 @@ object FastdroidFileUtils {
         return temp
     }
 
+    fun String.saveToFile(fileName: String): String {
+        var dest = CONTENT_ROOT
+        if (dest.isEmpty()) {
+            return ""
+        }
+        dest += File.separator + "_Others" + File.separator + fileName
+        dest = dest.replace("//", "/")
+
+        val parentPath = File(dest).parent ?: ""
+        val f = File(parentPath)
+        if (!f.exists()) f.mkdirs()
+
+        File(dest).printWriter().use { out ->
+            out.write(this)
+        }
+        return dest
+    }
+
 
     fun String.copyTo(dst: String): String {
         val f1 = File(this)
