@@ -246,7 +246,7 @@ class SpeciesInfoProviderActivity :
                 Toasty.error(
                     this,
                     String.format(
-                        L(getString(R.string.YouMustPickAtleast_ImageAboutThisSpecies)),
+                        L(getString(R.string.YouMustPickAtleast__d__ImageAboutThisSpecies)),
                         MinImageRequest
                     ),
                     Toasty.LENGTH_SHORT,

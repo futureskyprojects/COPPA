@@ -1,9 +1,9 @@
 package me.vistark.coppa.ui.auth
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import com.google.gson.Gson
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.auth_signin.*
@@ -15,6 +15,7 @@ import me.vistark.coppa._core.api.APIService
 import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.application.DefaultValue
 import me.vistark.coppa.application.RuntimeStorage
+import me.vistark.coppa.application.RuntimeStorage.Countries
 import me.vistark.coppa.application.RuntimeStorage.CurrentUsername
 import me.vistark.coppa.application.api.signin.request.LoginRequestDTO
 import me.vistark.coppa.application.api.signup.request.RegisterRequestDTO
@@ -23,7 +24,6 @@ import me.vistark.coppa.ui.auth.app_languages.LRecyclerViewExtension.bindL
 import me.vistark.coppa.ui.splash_screen.SplashActivity
 import me.vistark.fastdroid.core.api.JwtAuth.updateJwtAuth
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
-import me.vistark.fastdroid.ui.components.languages.more_languages.LangueExtensionForRecyclerView.bindMoreLanguage
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
 import me.vistark.fastdroid.utils.AnimationUtils.fadeIn
 import me.vistark.fastdroid.utils.AnimationUtils.fadeOut
@@ -40,6 +40,7 @@ import me.vistark.fastdroid.utils.GlideUtils.load
 import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
+import me.vistark.fastdroid.utils.StringUtils.like
 import me.vistark.fastdroid.utils.ViewExtension.bindDatePicker
 import me.vistark.fastdroid.utils.ViewExtension.hide
 import me.vistark.fastdroid.utils.ViewExtension.moveToTop
@@ -73,10 +74,11 @@ class AuthActivity : FastdroidActivity(
 
         initMoreLanguages()
 
+        syncLanguage()
+
     }
 
     private fun initMoreLanguages() {
-        Log.w("ABC", Gson().toJson(RuntimeStorage.Countries))
         crrLang.load(RuntimeStorage.Countries.firstOrNull {
             it.cultureName == RuntimeStorage.SavedCulture ||
                     it.cultureName == RuntimeStorage.Translates.localization.currentCulture.cultureName
@@ -107,10 +109,8 @@ class AuthActivity : FastdroidActivity(
                     true
                 ).show()
             } else {
-                syncLanguage(
-                    cultureName = it.cultureName,
-                    isReload = true
-                )
+                RuntimeStorage.SavedCulture = it.cultureName
+                syncLanguage(true)
             }
         }
 //        moreLanguages.bindMoreLanguage(RuntimeStorage.Countries.map { it.flagIcon.coppaCorrectResourcePath() }
@@ -226,12 +226,14 @@ class AuthActivity : FastdroidActivity(
             HideKeyboard()
             clearAllEdtForcus()
         }
-        defaultPasswordShow.text = L(
+
+        initCountrySpinner()
+
+        defaultPasswordShow.text =
             String.format(
-                getString(R.string.yourdefaultpasswordwas____),
+                L(getString(R.string.yourdefaultpasswordwas__s__)),
                 DefaultValue.DefaultPassword
             )
-        )
         asUsername.onTextChanged {
             aaTvAlertDanger.hide()
             registerRequestDTO.username = it
@@ -306,6 +308,13 @@ class AuthActivity : FastdroidActivity(
                 aaVesselRegistration.required(L(getString(R.string.YouMustInputVesselRegistration))),
                 aaDuration.required(L(getString(R.string.YouMustInputDuration)))
             )
+
+            // Thêm check lỗi cho phần chọn quốc gia
+            if (registerRequestDTO.cultureName.trim().isEmpty()) {
+                errors.add(L(getString(R.string.YouMustPickYourCountry)))
+            }
+
+
             if (errors.count { it.isNotEmpty() } > 0) {
                 val err = errors.firstOrNull { it.isNotEmpty() }
                 aaTvAlertDanger.text = err
@@ -313,13 +322,13 @@ class AuthActivity : FastdroidActivity(
             } else {
                 // Ghi tạm dữ liệu
                 registerRequestDTO.image = ""
-                registerRequestDTO.cultureName = RuntimeStorage.SavedCulture
                 registerRequestDTO.password = DefaultValue.DefaultPassword
 
                 val loading = showLoadingBase()
                 GlobalScope.launch {
                     try {
-                        val successBody = APIService().APIs.postRegister(registerRequestDTO).await()
+                        val successBody =
+                            APIService().APIs.postRegister(registerRequestDTO).await()
                         if (successBody?.status == 200 && successBody.result != null) {
                             // Cập nhật thông tin xác thực
                             updateJwtAuth(
@@ -359,6 +368,30 @@ class AuthActivity : FastdroidActivity(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun initCountrySpinner() {
+        val countries = Countries.map { it.displayName + " (${it.cultureName})" }
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item, countries
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        countrySelector.adapter = adapter
+        countrySelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                registerRequestDTO.cultureName =
+                    countries[position].like(" \\(([a-zA-Z_]{2,8})\\)", 1)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
     }

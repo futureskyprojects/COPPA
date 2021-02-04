@@ -133,6 +133,19 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/country" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/countrySelector"
+            style="@style/Fastdroid.Spinner.Default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown" />
+
+        <TextView
+            style="@style/Fastdroid.TextView.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/duration" />
 
         <TextView

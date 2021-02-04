@@ -8,21 +8,37 @@ import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.domain.entity.*
 import me.vistark.coppa.domain.entity.languages.CoppaTrans
 import me.vistark.fastdroid.utils.GlideUtils.cacheImage
+import me.vistark.fastdroid.utils.ObjectUtils.clone
 import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 import java.lang.Exception
 
 object RuntimeStorage {
     fun clear() {
-        TripSyncs = emptyArray()
-        CurrentTripSync = null
-        TripLogs = emptyArray()
-        CurrentCaptainProfile = CaptainProfile()
+        val speciesCategories = SpeciesCategories.clone()
+        val specieses = Specieses.clone()
+        val seaPorts = SeaPorts.clone()
+        val tripLogs = TripLogs.clone()
+
+        val countries = Countries.clone()
+        val translates = Translates.clone()
+        val currentUsername = CurrentUsername
+        val savedCulture = SavedCulture
+
+        AppStorageManager.storageSP?.edit()?.clear()?.apply()
+        SpeciesCategories = speciesCategories
+        Specieses = specieses
+        SeaPorts = seaPorts
+        TripLogs = tripLogs
+
+        Countries = countries
+        Translates = translates
+        CurrentUsername = currentUsername
+        SavedCulture = savedCulture
     }
 
     fun Context.cacheImages(onCompleted: (() -> Unit)?) {
         Thread {
-            cacheImage(CurrentCaptainProfile.image.coppaCorrectResourcePath())
             Countries.forEach {
                 cacheImage(it.flagIcon.coppaCorrectResourcePath())
             }
@@ -37,35 +53,38 @@ object RuntimeStorage {
     }
 
 
-    fun init() {
+    fun init(onCompleted: (() -> Unit)? = null) {
         GlobalScope.launch {
             try {
                 val apis = APIService().APIs
                 // Lấy danh sách các nhóm loài
                 val speciesCategory = apis.getSpeciesCategories().await()
                 speciesCategory!!.result?.apply {
-                    RuntimeStorage.SpeciesCategories = this.toTypedArray()
+                    SpeciesCategories = this.toTypedArray()
                 }
 
                 // Lấy danh sách các loài
                 val specieses = apis.getSpecieses().await()
                 specieses!!.result?.apply {
-                    RuntimeStorage.Specieses = this.toTypedArray()
+                    Specieses = this.toTypedArray()
                 }
 
                 // Lấy danh sách các cảng biển
                 val seaPorts = apis.getSeaPorts().await()
                 seaPorts!!.result?.apply {
-                    RuntimeStorage.SeaPorts = this.toTypedArray()
+                    SeaPorts = this.toTypedArray()
                 }
 
                 // Lấy danh sách lịch sử chuyến đi biển
                 val tripLogs = apis.getTripHistories().await()
                 tripLogs!!.result?.apply {
-                    RuntimeStorage.TripLogs = this.toTypedArray()
+                    TripLogs = this.toTypedArray()
                 }
+
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                onCompleted?.invoke()
             }
         }
     }
@@ -115,7 +134,6 @@ object RuntimeStorage {
     var CurrentCaptainProfile: CaptainProfile
         get() = AppStorageManager.get("COPPA_SAVED_CAPTAIN_PROFILE") ?: CaptainProfile()
         set(value) {
-            SavedCulture = value.cultureName
             AppStorageManager.update("COPPA_SAVED_CAPTAIN_PROFILE", value)
         }
 

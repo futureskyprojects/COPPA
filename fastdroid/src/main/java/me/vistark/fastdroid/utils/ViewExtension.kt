@@ -47,12 +47,14 @@ object ViewExtension {
     }
 
     fun View.hide() {
-        scaleDownCenter(150)
+        if (View.VISIBLE == View.VISIBLE)
+            scaleDownCenter(150)
 //        this.visibility = View.GONE
     }
 
     fun View.show() {
-        scaleUpCenter(150)
+        if (View.VISIBLE == View.GONE)
+            scaleUpCenter(150)
 //        this.visibility = View.VISIBLE
     }
 

@@ -151,7 +151,7 @@ class BackgroundService : FastdroidService(
 
         updateLoading(
             String.format(
-                L(getString(R.string.Sync_Trip)),
+                L(getString(R.string.Sync__d__Trip)),
                 RuntimeStorage.TripSyncs.size
             )
         )

@@ -14,10 +14,18 @@ object MultipleLanguage {
             AppStorageManager.update("APP_DINAMIC_TRANSLATE", value)
         }
 
+    private fun String.trueParams(): String {
+        return this
+            .replace("__d__", "%d")
+            .replace("__s__", "%s")
+    }
+
     fun L(key: String): String {
         if (key.isEmpty())
             return ""
-        return Translates.firstOrNull { it.key.equals(key, ignoreCase = true) }?.value ?: "[$key]"
+        return Translates.firstOrNull {
+            it.key.trueParams().equals(key.trueParams(), ignoreCase = true)
+        }?.value ?: "[$key]"
     }
 
     fun View.autoTranslate() {

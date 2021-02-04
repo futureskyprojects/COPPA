@@ -25,12 +25,12 @@
     <string name="YouMustConnectToInternetToHveFinishAndSyncCurrentTrip">YouMustConnectToInternetToHveFinishAndSyncCurrentTrip</string>
     <string name="LengIsInvalid">LengIsInvalid</string>
     <string name="WeightIsInvalid">WeightIsInvalid</string>
-    <string name="YouMustPickAtleast_ImageAboutThisSpecies">YouMustPickAtleast%dImageAboutThisSpecies</string>
+    <string name="YouMustPickAtleast__d__ImageAboutThisSpecies">YouMustPickAtleast__d__ImageAboutThisSpecies</string>
     <string name="PleaseWaitForAFewMinutesSystemIsDetectYourLocationCoordinates">PleaseWaitForAFewMinutesSystemIsDetectYourLocationCoordinates</string>
     <string name="YouMustCorrectAllFiled">YouMustCorrectAllFiled</string>
     <string name="SavingYourCatchedSpecies">SavingYourCatchedSpecies</string>
     <string name="SaveSpeciesSuccessful">SaveSpeciesSuccessful</string>
-    <string name="Sync_Trip">Sync%dTrip(s)</string>
+    <string name="Sync__d__Trip">Sync__d__Trip</string>
     <string name="UpdateYourProfileSuccessful">UpdateYourProfileSuccessful</string>
     <string name="PleaseConnectToInternetBeforeUpdateYourProfile">PleaseConnectToInternetBeforeUpdateYourProfile</string>
     <string name="camera">Camera</string>
@@ -65,7 +65,7 @@
     <string name="fishinglicense">FishingLicense</string>
     <string name="vesselregistration">VesselRegistration</string>
     <string name="duration">Duration</string>
-    <string name="yourdefaultpasswordwas____">YourDefaultPasswordWas%s</string>
+    <string name="yourdefaultpasswordwas__s__">yourdefaultpasswordwas__s__</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="or">OR</string>
@@ -93,7 +93,7 @@
     <string name="Camera">Camera</string>
     <string name="RequiredToBeAbleToAccessTheCameraDevice">RequiredToBeAbleToAccessTheCameraDevice</string>
     <string name="AppIsRunningInBackground">AppIsRunningInBackground</string>
-    <string name="HiCaptain___">HiCaptain%s!</string>
+    <string name="HiCaptain__s__">HiCaptain__s__</string>
     <string name="LogingOut">LogingOut…</string>
     <string name="PortOfDeparture">PortOfDeparture</string>
     <string name="PortOfReturn">PortOfReturn</string>
@@ -103,5 +103,7 @@
     <string name="DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone">DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone.</string>
     <string name="DeleteSuccessful">DeleteSuccessful</string>
     <string name="DeleteFail">DeleteFail</string>
-    <string name="CachingAppImagesData">CachingAppImagesData...</string>
+    <string name="CachingAppImagesData">CachingAppImagesData…</string>
+    <string name="country">Country</string>
+    <string name="YouMustPickYourCountry">YouMustPickYourCountry</string>
 </resources>

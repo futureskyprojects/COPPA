@@ -23,8 +23,8 @@ android {
         applicationId "me.vistark.coppa"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 210204001
-        versionName "210204.001"
+        versionCode 210204059
+        versionName "210204.059"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.sign

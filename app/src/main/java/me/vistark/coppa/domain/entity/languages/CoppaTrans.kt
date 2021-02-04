@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import me.vistark.coppa._core.api.APIService
 import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.application.api.trans.request.CoppaTranslateRequest
+import me.vistark.fastdroid.core.api.JwtAuth.isAuthenticated
 import me.vistark.fastdroid.core.models.FastdroiBaseMap
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.ui.overlay.LoadingBase.showLoadingBase
@@ -23,7 +24,7 @@ class CoppaTrans(
     companion object {
         fun FastdroidActivity.syncLanguage(
             isReload: Boolean = false,
-            cultureName: String = ""
+            onCompleted: (() -> Unit)? = null
         ) {
             if (!isInternetAvailable()) {
                 // Bỏ qua nếu không có mạng
@@ -36,6 +37,16 @@ class CoppaTrans(
             GlobalScope.launch {
                 try {
                     val apis = APIService().APIs
+                    var cultureName = ""
+                    if (isAuthenticated()) {
+                        cultureName =
+                            RuntimeStorage.Translates.localization.currentCulture.cultureName
+                    }
+
+                    if (RuntimeStorage.SavedCulture.isNotEmpty()) {
+                        cultureName = RuntimeStorage.SavedCulture
+                    }
+
                     val coppaTrans = if (cultureName.isEmpty()) {
                         apis.getDefaultLanguages().await()
                     } else {
@@ -63,6 +74,7 @@ class CoppaTrans(
                 } finally {
                     runOnUiThread {
                         loading?.dismiss()
+                        onCompleted?.invoke()
                     }
                 }
             }

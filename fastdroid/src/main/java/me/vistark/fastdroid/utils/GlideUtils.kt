@@ -56,17 +56,11 @@ object GlideUtils {
                     url,
                     filename = "/cache/${filename}"
                 )
-                if (path.isNotEmpty()) {
-                    try {
-                        File(snapshotPath).delete()
-                    } catch (z: Exception) {
-                        z.printStackTrace()
-                    }
-                }
                 AppStorageManager.update(genKey, path)
                 Log.w("CACHE", "Cache [$url] to [$path]")
                 return path
             } catch (e: Exception) {
+                Log.w("CACHE", "Cache [$url] to Error")
                 e.printStackTrace()
                 return snapshotPath
             }
@@ -83,7 +77,7 @@ object GlideUtils {
         else {
             val genKey = url.md5() + "." + url.length
             val snapshotPath: String = AppStorageManager.get(genKey) ?: ""
-            var isSaved: Boolean = false
+            var isSaved = false
             path(snapshotPath)
             if (isInternetAvailable()) {
                 val filename = if (snapshotPath.isEmpty()) "${UUID.randomUUID()}.jpg"
@@ -94,21 +88,14 @@ object GlideUtils {
                             url,
                             filename = "/cache/${filename}"
                         )
-                        if (path.isNotEmpty()) {
-                            try {
-                                File(snapshotPath).delete()
-                            } catch (z: Exception) {
-                                z.printStackTrace()
-                            }
-                            isSaved = true
-                        }
+
                         AppStorageManager.update(genKey, path)
 
                         post {
                             path(path)
                         }
                     } catch (ex: ExecutionException) {
-
+                        ex.printStackTrace()
                     } catch (e: Exception) {
                         if (snapshotPath.isEmpty() && !isSaved)
                             post { setImageResource(R.drawable.fastdroid_holder) }
@@ -124,6 +111,10 @@ object GlideUtils {
         maxSize: Int = 1024,
         filename: String = UUID.randomUUID().toString() + ".jpg"
     ): String {
+        Log.w(
+            "GlideUtils.SaveImage",
+            "Saving image [$url] to [${externalCacheDir?.path ?: ""}$filename]..."
+        )
         return saveBitmap(
             Glide.with(this)
                 .asBitmap()

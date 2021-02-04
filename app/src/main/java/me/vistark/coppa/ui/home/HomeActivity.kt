@@ -175,9 +175,10 @@ class HomeActivity : FastdroidActivity(
     private fun loadCurrentUserInfo() {
         lhhcTvWelcomeText.text =
             String.format(
-                L(getString(R.string.HiCaptain___)),
+                L(getString(R.string.HiCaptain__s__)),
                 RuntimeStorage.CurrentCaptainProfile.captain.split(" ").lastOrNull() ?: ""
             )
+        lhhcTvWelcomeText.isSelected = true
         lhhcIvUserAvatar.load(
             RuntimeStorage.CurrentCaptainProfile.image.coppaCorrectResourcePath(),
             true
@@ -299,6 +300,7 @@ class HomeActivity : FastdroidActivity(
         if (key == BackgroundService.REALTIME_COORDINATES) {
             val data = Gson().fromJson(value, FastdroidCoordinate::class.java)
             lhhcTvCoordinates.text = LatLngToDMS(data.lat, data.long)
+            lhhcTvCoordinates.isSelected = true
             PUBLIC_CURRENT_COORDINATES = LatLng(data.lat, data.long)
             MoveCamera(data.lat, data.long)
         }

@@ -62,23 +62,18 @@ class SplashActivity : FastdroidActivity(
             startNext()
             return
         }
-
-        // Nếu chưa đăng nhập, thì tiến hành lấy ngôn ngữ theo kiểu mặc định
-        if (!isAuthenticated()) {
-            syncLanguage(cultureName = SavedCulture)
-        } else {
-            syncLanguage(cultureName = RuntimeStorage.CurrentCaptainProfile.cultureName)
-        }
+        syncLanguage()
 
         // Nếu đã đăng nhập, tiến hành sync data từ server
         if (isAuthenticated()) {
-            init()
-            aloTvLoadingMessage.post {
-                aloTvLoadingMessage.text = L(getString(R.string.CachingAppImagesData))
-            }
-            cacheImages {
-                runOnUiThread {
-                    startNext()
+            init {
+                aloTvLoadingMessage.post {
+                    aloTvLoadingMessage.text = L(getString(R.string.CachingAppImagesData))
+                }
+                cacheImages {
+                    runOnUiThread {
+                        startNext()
+                    }
                 }
             }
         } else {

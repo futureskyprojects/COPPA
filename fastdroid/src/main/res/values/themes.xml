@@ -21,6 +21,15 @@
         <item name="colorPrimaryVariant">@color/fastDroidPrimaryColor</item>
     </style>
 
+    <style name="Fastdroid.Spinner.Default" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/edittext_base</item>
+        <item name="android:textColor">@color/fastDroidTextColor</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">@dimen/space_default</item>
+        <item name="android:textColorHint">#9d9d9d</item>
+    </style>
+
     <style name="Fastdroid.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>

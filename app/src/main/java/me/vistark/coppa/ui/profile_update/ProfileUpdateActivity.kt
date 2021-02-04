@@ -18,6 +18,8 @@ import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.application.api.captain_profile.request.UpdateCaptainProfileRequestDTO
 import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguage
 import me.vistark.coppa.ui.auth.AuthActivity
+import me.vistark.coppa.ui.home.HomeActivity
+import me.vistark.coppa.ui.splash_screen.SplashActivity
 import me.vistark.fastdroid.core.api.JwtAuth.clearAuthentication
 import me.vistark.fastdroid.ui.activities.FastdroidActivity
 import me.vistark.fastdroid.ui.components.languages.more_languages.LangueExtensionForRecyclerView.bindMoreLanguage
@@ -100,11 +102,15 @@ class ProfileUpdateActivity : FastdroidActivity(
                     true
                 ).show()
             } else {
-                syncLanguage(
-                    cultureName = RuntimeStorage.Countries.firstOrNull { it.flagIcon.coppaCorrectResourcePath() == selected }?.cultureName
-                        ?: "",
-                    isReload = true
-                )
+                RuntimeStorage.Countries.firstOrNull { it.flagIcon.coppaCorrectResourcePath() == selected }?.cultureName?.apply {
+                    RuntimeStorage.SavedCulture = this
+                }
+                syncLanguage {
+                    rlContainer.scaleDownCenter {
+                        startSingleActivity(HomeActivity::class.java)
+                        overridePendingTransition(-1, -1)
+                    }
+                }
             }
         }
     }
@@ -404,7 +410,7 @@ class ProfileUpdateActivity : FastdroidActivity(
 
             runOnUiThread {
                 loading.dismiss()
-                startSingleActivity(AuthActivity::class.java)
+                startSingleActivity(SplashActivity::class.java)
             }
         }.start()
     }
