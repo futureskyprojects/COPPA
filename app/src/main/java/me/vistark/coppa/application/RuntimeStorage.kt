@@ -1,10 +1,13 @@
 package me.vistark.coppa.application
 
+import android.content.Context
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.vistark.coppa._core.api.APIService
+import me.vistark.coppa._core.utils.CorrectURL.coppaCorrectResourcePath
 import me.vistark.coppa.domain.entity.*
 import me.vistark.coppa.domain.entity.languages.CoppaTrans
+import me.vistark.fastdroid.utils.GlideUtils.cacheImage
 import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
 import me.vistark.fastdroid.utils.storage.AppStorageManager
 import java.lang.Exception
@@ -16,6 +19,23 @@ object RuntimeStorage {
         TripLogs = emptyArray()
         CurrentCaptainProfile = CaptainProfile()
     }
+
+    fun Context.cacheImages(onCompleted: (() -> Unit)?) {
+        Thread {
+            cacheImage(CurrentCaptainProfile.image.coppaCorrectResourcePath())
+            Countries.forEach {
+                cacheImage(it.flagIcon.coppaCorrectResourcePath())
+            }
+            SpeciesCategories.forEach {
+                cacheImage(it.image.coppaCorrectResourcePath())
+            }
+            Specieses.forEach {
+                cacheImage(it.image.coppaCorrectResourcePath())
+            }
+            onCompleted?.invoke()
+        }.start()
+    }
+
 
     fun init() {
         GlobalScope.launch {

@@ -9,6 +9,7 @@ import me.vistark.coppa._core.remote_config.RemoteConfig.initRemoteConfig
 import me.vistark.coppa.application.DefaultValue
 import me.vistark.coppa.application.RuntimeStorage
 import me.vistark.coppa.application.RuntimeStorage.SavedCulture
+import me.vistark.coppa.application.RuntimeStorage.cacheImages
 import me.vistark.coppa.application.RuntimeStorage.init
 import me.vistark.coppa.domain.entity.languages.CoppaTrans.Companion.syncLanguage
 import me.vistark.coppa.ui.auth.AuthActivity
@@ -72,10 +73,18 @@ class SplashActivity : FastdroidActivity(
         // Nếu đã đăng nhập, tiến hành sync data từ server
         if (isAuthenticated()) {
             init()
-        }
-
-        runOnUiThread {
-            startNext()
+            aloTvLoadingMessage.post {
+                aloTvLoadingMessage.text = L(getString(R.string.CachingAppImagesData))
+            }
+            cacheImages {
+                runOnUiThread {
+                    startNext()
+                }
+            }
+        } else {
+            runOnUiThread {
+                startNext()
+            }
         }
     }
 

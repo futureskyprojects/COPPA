@@ -103,4 +103,5 @@
     <string name="DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone">DoYouReallyWantToDeleteTheRecord_ThisCannotBeUndone.</string>
     <string name="DeleteSuccessful">DeleteSuccessful</string>
     <string name="DeleteFail">DeleteFail</string>
+    <string name="CachingAppImagesData">CachingAppImagesData...</string>
 </resources>

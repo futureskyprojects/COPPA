@@ -46,6 +46,7 @@ import me.vistark.fastdroid.utils.ViewExtension.moveToTop
 import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
 import me.vistark.fastdroid.utils.ViewExtension.show
+import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
 
 
 class AuthActivity : FastdroidActivity(
@@ -218,12 +219,18 @@ class AuthActivity : FastdroidActivity(
     }
 
     private fun bindDtoForRegister() {
+        signUpLn.setOnClickListener {
+            HideKeyboard()
+        }
         asuScrvSignUp.viewTreeObserver.addOnScrollChangedListener {
+            HideKeyboard()
             clearAllEdtForcus()
         }
-        defaultPasswordShow.text = String.format(
-            getString(R.string.yourdefaultpasswordwas____),
-            DefaultValue.DefaultPassword
+        defaultPasswordShow.text = L(
+            String.format(
+                getString(R.string.yourdefaultpasswordwas____),
+                DefaultValue.DefaultPassword
+            )
         )
         asUsername.onTextChanged {
             aaTvAlertDanger.hide()

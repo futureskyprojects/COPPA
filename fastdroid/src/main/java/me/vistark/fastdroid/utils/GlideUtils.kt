@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import me.vistark.fastdroid.R
+import me.vistark.fastdroid.utils.GlideUtils.path
+import me.vistark.fastdroid.utils.GlideUtils.saveImage
 import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.SecurityHashUtils.md5
 import me.vistark.fastdroid.utils.storage.AppStorageManager
@@ -42,6 +44,39 @@ object GlideUtils {
         }
     }
 
+    fun Context.cacheImage(url: String): String {
+        val genKey = url.md5() + "." + url.length
+        val snapshotPath: String = AppStorageManager.get(genKey) ?: ""
+        if (isInternetAvailable()) {
+            val filename = if (snapshotPath.isEmpty()) "${UUID.randomUUID()}.jpg"
+            else File(snapshotPath).name
+            // Nếu có mạng, tiến hành load ảnh để cache
+            try {
+                val path = saveImage(
+                    url,
+                    filename = "/cache/${filename}"
+                )
+                if (path.isNotEmpty()) {
+                    try {
+                        File(snapshotPath).delete()
+                    } catch (z: Exception) {
+                        z.printStackTrace()
+                    }
+                }
+                AppStorageManager.update(genKey, path)
+                Log.w("CACHE", "Cache [$url] to [$path]")
+                return path
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return snapshotPath
+            }
+        } else {
+            Log.w("CACHE", "NO internet for cache [$url]")
+            // Không thì tiến hành đẩy path đã cache về, hoặc bỏ qua
+            return snapshotPath
+        }
+    }
+
     fun ImageView.load(url: String, isCache: Boolean) {
         if (!isCache)
             load(url)
@@ -51,11 +86,13 @@ object GlideUtils {
             var isSaved: Boolean = false
             path(snapshotPath)
             if (isInternetAvailable()) {
+                val filename = if (snapshotPath.isEmpty()) "${UUID.randomUUID()}.jpg"
+                else File(snapshotPath).name
                 Thread {
                     try {
                         val path = context.saveImage(
                             url,
-                            filename = "/cache/${UUID.randomUUID()}.jpg"
+                            filename = "/cache/${filename}"
                         )
                         if (path.isNotEmpty()) {
                             try {
@@ -87,7 +124,6 @@ object GlideUtils {
         maxSize: Int = 1024,
         filename: String = UUID.randomUUID().toString() + ".jpg"
     ): String {
-        Log.w("[GLIDE]", "Save from [$url]")
         return saveBitmap(
             Glide.with(this)
                 .asBitmap()
