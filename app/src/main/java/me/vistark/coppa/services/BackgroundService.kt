@@ -2,7 +2,6 @@ package me.vistark.coppa.services
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.*
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
@@ -10,7 +9,6 @@ import android.location.LocationManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -28,16 +26,12 @@ import me.vistark.fastdroid.utils.InternetUtils.isInternetAvailable
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.PermissionUtils.isPermissionGranted
 import me.vistark.fastdroid.utils.Retrofit2Extension.Companion.await
-import me.vistark.fastdroid.utils.storage.FastdroidFileUtils
 import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.deleteOnExists
-import me.vistark.fastdroid.utils.storage.FastdroidFileUtils.saveToFile
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.HttpException
 import java.io.File
-import java.io.PrintStream
-import java.io.PrintWriter
 import java.util.*
 
 
@@ -53,7 +47,7 @@ class BackgroundService : FastdroidService(
     val LOCATION_REFRESH_TIME = 2000L
 
     // Khoảng cách tương đối có thể chấp nhận
-    val LOCATION_REFRESH_DISTANCE = 1F
+    val LOCATION_REFRESH_DISTANCE = 20F
 
     var mLocationManager: LocationManager? = null
 
@@ -70,14 +64,16 @@ class BackgroundService : FastdroidService(
 
     @SuppressLint("MissingPermission")
     fun syncLocation() {
-        if (mLocationManager != null) {
-            mLocationManager?.removeUpdates(this)
-        }
+//        SmartLocation.with(this).location()
+//            .start {
+//                onLocationChanged(it)
+//            }
+//        if (mLocationManager != null) {
+//            mLocationManager?.removeUpdates(this)
+//        }
         mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         // Lấy vị trí được hệ thống thu thập lần cuối cùng
-        val criteria = Criteria()
-        val provider = mLocationManager?.getBestProvider(criteria, false)
-        val location: Location? = provider?.let { mLocationManager?.getLastKnownLocation(it) }
+        val location = getLastKnownLocation();
         if (location != null) {
             onLocationChanged(location)
             Log.e(
@@ -87,10 +83,25 @@ class BackgroundService : FastdroidService(
         } else {
             Log.e("[SERVICE]location", "Not available")
         }
-        mLocationManager?.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+        mLocationManager!!.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            LOCATION_REFRESH_TIME,
             LOCATION_REFRESH_DISTANCE, this
         )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastKnownLocation(): Location? {
+        val providers = mLocationManager!!.getProviders(true)
+        var bestLocation: Location? = null
+        for (provider in providers) {
+            val l = mLocationManager!!.getLastKnownLocation(provider) ?: continue
+            if (bestLocation == null || l.accuracy < bestLocation.accuracy) {
+                // Found best last known location: %s", l);
+                bestLocation = l
+            }
+        }
+        return bestLocation
     }
 
     @SuppressLint("MissingPermission")

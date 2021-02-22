@@ -89,7 +89,8 @@ class ProfileUpdateActivity : FastdroidActivity(
 
     private fun initForMoreLanguageOptions() {
         moreLanguages.bindMoreLanguage(
-            RuntimeStorage.Countries.map { it.flagIcon.coppaCorrectResourcePath() }
+            RuntimeStorage.Countries.filter { x -> x.cultureName != RuntimeStorage.SavedCulture }
+                .map { it.flagIcon.coppaCorrectResourcePath() }
                 .toTypedArray(),
             RuntimeStorage.Translates.localization.currentCulture.flagIcon.coppaCorrectResourcePath(),
             true

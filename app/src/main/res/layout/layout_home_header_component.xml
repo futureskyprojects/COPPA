@@ -51,6 +51,7 @@
                     android:ellipsize="marquee"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
+                    android:textAlignment="textEnd"
                     android:textColor="@color/fastDroidPrimaryDark"
                     android:textSize="16sp" />
 
