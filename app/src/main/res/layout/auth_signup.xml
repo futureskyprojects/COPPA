@@ -32,7 +32,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:text="(*)"
-                android:textColor="@drawable/button_danger"
+                android:textColor="@color/fastDroidDangerColor"
                 android:textSize="9sp"
                 android:textStyle="italic" />
         </LinearLayout>
@@ -80,7 +80,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:text="(*)"
-                android:textColor="@drawable/button_danger"
+                android:textColor="@color/fastDroidDangerColor"
                 android:textSize="9sp"
                 android:textStyle="italic" />
         </LinearLayout>
@@ -132,7 +132,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:text="(*)"
-                android:textColor="@drawable/button_danger"
+                android:textColor="@color/fastDroidDangerColor"
                 android:textSize="9sp"
                 android:textStyle="italic" />
         </LinearLayout>
@@ -185,7 +185,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:text="(*)"
-                android:textColor="@drawable/button_danger"
+                android:textColor="@color/fastDroidDangerColor"
                 android:textSize="9sp"
                 android:textStyle="italic" />
         </LinearLayout>
@@ -218,7 +218,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
                 android:text="(*)"
-                android:textColor="@drawable/button_danger"
+                android:textColor="@color/fastDroidDangerColor"
                 android:textSize="9sp"
                 android:textStyle="italic" />
         </LinearLayout>

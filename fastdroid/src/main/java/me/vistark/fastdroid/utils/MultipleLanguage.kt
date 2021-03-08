@@ -25,7 +25,7 @@ object MultipleLanguage {
             return ""
         return Translates.firstOrNull {
             it.key.trueParams().equals(key.trueParams(), ignoreCase = true)
-        }?.value ?: "[$key]"
+        }?.value ?: "$key"
     }
 
     fun View.autoTranslate() {
