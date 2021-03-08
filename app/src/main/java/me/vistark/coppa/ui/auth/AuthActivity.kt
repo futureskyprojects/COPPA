@@ -48,6 +48,7 @@ import me.vistark.fastdroid.utils.ViewExtension.onTap
 import me.vistark.fastdroid.utils.ViewExtension.onTextChanged
 import me.vistark.fastdroid.utils.ViewExtension.show
 import me.vistark.fastdroid.utils.keyboard.HideKeyboardExtension.Companion.HideKeyboard
+import java.util.*
 
 
 class AuthActivity : FastdroidActivity(
@@ -211,11 +212,11 @@ class AuthActivity : FastdroidActivity(
         asUsername.clearFocus()
         aaEmail.clearFocus()
         aaPhone.clearFocus()
-        aaShipOwner.clearFocus()
+//        aaShipOwner.clearFocus()
         aaCaptain.clearFocus()
-        aaFishLicense.clearFocus()
+//        aaFishLicense.clearFocus()
         aaVesselRegistration.clearFocus()
-        aaDuration.clearFocus()
+//        aaDuration.clearFocus()
     }
 
     private fun bindDtoForRegister() {
@@ -252,31 +253,33 @@ class AuthActivity : FastdroidActivity(
             registerRequestDTO.phone = it
         }
 
-        aaShipOwner.onTextChanged {
-            aaTvAlertDanger.hide()
-            registerRequestDTO.shipowner = it
-        }
+//        aaShipOwner.onTextChanged {
+//            aaTvAlertDanger.hide()
+//            registerRequestDTO.shipowner = it
+//        }
 
 
         aaCaptain.onTextChanged {
             aaTvAlertDanger.hide()
             registerRequestDTO.captain = it
+            registerRequestDTO.shipowner = it
         }
 
-
-        aaFishLicense.onTextChanged {
-            registerRequestDTO.fishingLicense = it
-        }
+        registerRequestDTO.fishingLicense = "Ignore"
+//        aaFishLicense.onTextChanged {
+//            registerRequestDTO.fishingLicense = it
+//        }
 
         aaVesselRegistration.onTextChanged {
             aaTvAlertDanger.hide()
             registerRequestDTO.vesselRegistration = it
         }
 
-        aaDuration.bindDatePicker {
-            aaTvAlertDanger.hide()
-            registerRequestDTO.duration = it.format()
-        }
+        registerRequestDTO.duration = Date().format()
+//        aaDuration.bindDatePicker {
+//            aaTvAlertDanger.hide()
+//            registerRequestDTO.duration = it.format()
+//        }
 
         asuBtnSignUp.onTap {
             if (!isInternetAvailable()) {
@@ -295,19 +298,25 @@ class AuthActivity : FastdroidActivity(
                     "^(?=.{4,64}\$)(?:[a-zA-Z\\d]+(?:(?:|_)[a-zA-Z\\d])*)+\$",
                     L(getString(R.string.UsernameMustBeazAZ09_AndHaveLengthFrom4To64))
                 ),
-                aaEmail.required(L(getString(R.string.YouMustInputYourEmail))),
-                aaEmail.validate("\\S+@\\S+\\.\\S+", L(getString(R.string.EmailIsInvalid))),
+//                aaEmail.required(L(getString(R.string.YouMustInputYourEmail))),
                 aaPhone.required(L(getString(R.string.YouMustInputPhone))),
                 aaPhone.validate(
                     "(\\+\\d{1,3})?[\\s.-]?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s-.]?\\d{4}",
                     L(getString(R.string.YourPhoneIsInvalid))
                 ),
-                aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),
+//                aaShipOwner.required(L(getString(R.string.YouMustInputShipOwner))),
                 aaCaptain.required(L(getString(R.string.YoutMustInputCaptain))),
-                aaFishLicense.required(L(getString(R.string.YouMustInputFishLicense))),
+//                aaFishLicense.required(L(getString(R.string.YouMustInputFishLicense))),
                 aaVesselRegistration.required(L(getString(R.string.YouMustInputVesselRegistration))),
-                aaDuration.required(L(getString(R.string.YouMustInputDuration)))
+//                aaDuration.required(L(getString(R.string.YouMustInputDuration)))
             )
+
+            if (aaEmail.text.isNotEmpty()) {
+                val validate =
+                    aaEmail.validate("\\S+@\\S+\\.\\S+", L(getString(R.string.EmailIsInvalid)))
+                if (validate.isNotEmpty())
+                    errors.add(validate)
+            }
 
             // Thêm check lỗi cho phần chọn quốc gia
             if (registerRequestDTO.cultureName.trim().isEmpty()) {

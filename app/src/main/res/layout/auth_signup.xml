@@ -14,11 +14,28 @@
         android:paddingHorizontal="20dp"
         android:paddingBottom="30dp">
 
-        <TextView
-            style="@style/Fastdroid.TextView.Label"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/username" />
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Fastdroid.TextView.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/username" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="(*)"
+                android:textColor="@drawable/button_danger"
+                android:textSize="9sp"
+                android:textStyle="italic" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/asUsername"
@@ -45,12 +62,28 @@
             android:inputType="textEmailAddress"
             android:lines="1" />
 
-        <TextView
-            android:id="@+id/aaTvPhone"
-            style="@style/Fastdroid.TextView.Label"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/phone" />
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Fastdroid.TextView.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/phone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="(*)"
+                android:textColor="@drawable/button_danger"
+                android:textSize="9sp"
+                android:textStyle="italic" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/aaPhone"
@@ -65,7 +98,8 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/shipowner" />
+            android:text="@string/shipowner"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/aaShipOwner"
@@ -77,13 +111,31 @@
             android:layout_weight="1"
             android:hint="@string/shipowner"
             android:inputType="textPersonName|textAutoComplete|textCapWords"
-            android:lines="1" />
+            android:lines="1"
+            android:visibility="gone" />
 
-        <TextView
-            style="@style/Fastdroid.TextView.Label"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/captain" />
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Fastdroid.TextView.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/captain" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="(*)"
+                android:textColor="@drawable/button_danger"
+                android:textSize="9sp"
+                android:textStyle="italic" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/aaCaptain"
@@ -101,7 +153,8 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/fishinglicense" />
+            android:text="@string/fishinglicense"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/aaFishLicense"
@@ -111,13 +164,31 @@
             android:hint="@string/fishinglicense"
             android:inputType="textCapCharacters"
             android:lines="1"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:visibility="gone" />
 
-        <TextView
-            style="@style/Fastdroid.TextView.Label"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/vesselregistration" />
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Fastdroid.TextView.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vesselregistration" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="(*)"
+                android:textColor="@drawable/button_danger"
+                android:textSize="9sp"
+                android:textStyle="italic" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/aaVesselRegistration"
@@ -129,11 +200,28 @@
             android:lines="1"
             android:textAllCaps="true" />
 
-        <TextView
-            style="@style/Fastdroid.TextView.Label"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/country" />
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Fastdroid.TextView.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/country" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="(*)"
+                android:textColor="@drawable/button_danger"
+                android:textSize="9sp"
+                android:textStyle="italic" />
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/countrySelector"
@@ -146,20 +234,23 @@
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/duration" />
+            android:text="@string/duration"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/aaDuration"
             style="@style/Fastdroid.Edittext.Default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/duration" />
+            android:hint="@string/duration"
+            android:visibility="gone" />
 
         <TextView
             style="@style/Fastdroid.TextView.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/password" />
+            android:text="@string/password"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/defaultPasswordShow"
@@ -169,7 +260,8 @@
             android:enabled="false"
             android:gravity="center"
             android:textColor="@color/fastDroidDangerColor"
-            android:textStyle="bold|italic" />
+            android:textStyle="bold|italic"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/asuBtnSignUp"
