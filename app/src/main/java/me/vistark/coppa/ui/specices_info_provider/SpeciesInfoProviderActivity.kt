@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,7 @@ import me.vistark.fastdroid.utils.AnimationUtils.scaleDownTopRight
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpBottomLeft
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpCenter
 import me.vistark.fastdroid.utils.AnimationUtils.scaleUpTopRight
+import me.vistark.fastdroid.utils.DateTimeUtils.Companion.format
 import me.vistark.fastdroid.utils.MultipleLanguage.L
 import me.vistark.fastdroid.utils.NumberUtils.toNumberString
 import me.vistark.fastdroid.utils.UriUtils.saveImage
@@ -78,6 +80,10 @@ class SpeciesInfoProviderActivity :
         // Khởi tạo hành động cho việc update nếu đang ở chế độ update
         if (isUpdate)
             initUpdateData()
+        else {
+            currentSpeciesSync.catchedAt = Date().format("yyyy-MM-dd HH:mm:ss")
+            tvCatchedAt.text = currentSpeciesSync.catchedAt
+        }
 
         // Gọi validate lại một lần để khóa nút nếu form không hợp lệ
         validate()
@@ -94,6 +100,7 @@ class SpeciesInfoProviderActivity :
         edtSpeciesLength.setText(currentSpeciesSync.length.toNumberString())
         edtSpeciesWeight.setText(currentSpeciesSync.weight.toNumberString())
         tvCatchedAt.text = currentSpeciesSync.catchedAt
+        tvCatchedAt.visibility = View.GONE
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -204,8 +211,8 @@ class SpeciesInfoProviderActivity :
             }
         }
 
-        tvCatchedAt.binDateTimePicker {
-        }
+//        tvCatchedAt.binDateTimePicker {
+//        }
 
         tvCatchedAt.doOnTextChanged { text, start, before, count ->
             validate()

@@ -360,6 +360,7 @@ class AuthActivity : FastdroidActivity(
                         } else {
                             if (successBody!!.message.isNotEmpty()) {
                                 aaTvAlertDanger.post {
+                                    aaTvAlertDanger.visibility = View.VISIBLE
                                     aaTvAlertDanger.text = successBody.message.first()
                                     aaTvAlertDanger.show()
                                 }
@@ -433,6 +434,7 @@ class AuthActivity : FastdroidActivity(
                 } else {
                     if (res!!.message.isNotEmpty()) {
                         aaTvAlertDanger.post {
+                            aaTvAlertDanger.visibility = View.VISIBLE
                             aaTvAlertDanger.text = res.message.first()
                             aaTvAlertDanger.show()
                         }

@@ -200,6 +200,8 @@ object AnimationUtils {
     }
 
     fun View.scaleDownCenter(duration: Long = 300L, onFinished: (() -> Unit)? = null) {
+        if (this.animation?.hasStarted() == true)
+            return
         val anim: Animation = ScaleAnimation(
             1f, 0f,  // Start and end values for the X axis scaling
             1f, 0f,  // Start and end values for the Y axis scaling
