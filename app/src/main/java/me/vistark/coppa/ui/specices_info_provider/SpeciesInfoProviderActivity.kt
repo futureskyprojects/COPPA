@@ -101,6 +101,7 @@ class SpeciesInfoProviderActivity :
         edtSpeciesWeight.setText(currentSpeciesSync.weight.toNumberString())
         tvCatchedAt.text = currentSpeciesSync.catchedAt
         tvCatchedAt.visibility = View.GONE
+        edtNote.setText(currentSpeciesSync.note)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -218,6 +219,11 @@ class SpeciesInfoProviderActivity :
             validate()
             currentSpeciesSync.catchedAt = tvCatchedAt.text.toString()
         }
+
+        edtNote.doOnTextChanged { text, start, before, count ->
+            currentSpeciesSync.note = edtNote.text.toString()
+        }
+
 
         edtSpeciesLength.onTextChanged {
             validate()

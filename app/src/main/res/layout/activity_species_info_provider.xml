@@ -172,6 +172,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/catchedat" />
+
+                <TextView
+                    style="@style/Fastdroid.TextView.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/note" />
+
+                <EditText
+                    android:id="@+id/edtNote"
+                    style="@style/Fastdroid.Edittext.Default"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:gravity="top|start"
+                    android:hint="@string/notehint"
+                    android:inputType="text"
+                    android:textStyle="normal" />
             </LinearLayout>
         </ScrollView>
 

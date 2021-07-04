@@ -19,5 +19,7 @@ data class SpeciesSync(
     @SerializedName("specie_id")
     var specieId: Int = 0,
     @SerializedName("weight")
-    var weight: Float = 0F
+    var weight: Float = 0F,
+    @SerializedName("note")
+    var note: String = "",
 )

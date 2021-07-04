@@ -10,7 +10,7 @@ plugins {
 android {
     signingConfigs {
         sign {
-            storeFile file('E:\\COPPA2\\key.jks')
+            storeFile file('/Users/vistark/StudioProjects/COPPA/key.jks')
             storePassword '22121223'
             keyAlias 'key'
             keyPassword '22121223'
@@ -23,8 +23,8 @@ android {
         applicationId "me.vistark.coppa"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 210222006
-        versionName "210222.006"
+        versionCode 210704001
+        versionName "210704.001"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.sign
@@ -56,8 +56,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.1.0'
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:26.3.0')
 
